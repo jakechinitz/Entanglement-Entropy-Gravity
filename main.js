@@ -146,8 +146,8 @@
   }
 
   function updateFluctuation() {
-    // Midpoint settings – visible but not frantic
-    const flickerChance = 0.0018; // Between 0.0008 and 0.003
+    // Slightly brighter, but still distinct from true entanglement
+    const flickerChance = 0.0018;
     const flickerDuration = 1200 + Math.random() * 1500; // 1.2–2.7 s
 
     for (let i = 0; i < tetraCount; i++) {
@@ -212,6 +212,14 @@
 
   function startEntanglementWave() {
     const waveSpeed = 0.05;
+
+    // IMPORTANT: reset all line strengths before entanglement wave starts
+    // so they don't inherit bright fluctuation state and flash.
+    for (let i = 0; i < lineCount; i++) {
+      lineStrength[i] = 0;
+      lineIsFluctuation[i] = 0;
+      lineFlickerEnd[i] = 0;
+    }
 
     for (let i = 0; i < tetraCount; i++) {
       const dx = tetraX[i] - seedX;
@@ -295,7 +303,7 @@
           if (lineStrength[i] > maxLine) maxLine = lineStrength[i];
         }
 
-        // Optionally let entanglement relax slightly but not vanish
+        // Let entanglement relax slightly but not vanish
         for (let i = 0; i < tetraCount; i++) {
           tetraEntanglement[i] *= 0.98;
         }
@@ -358,13 +366,13 @@
       // True entanglement links: brighter, thicker, more "solid"
       let alpha, widthScale, color;
       if (isEntangled) {
-        alpha = 0.25 + s * 0.8;
-        widthScale = 1.4 + s * 2.4;
+        alpha = 0.3 + s * 0.9;
+        widthScale = 1.6 + s * 2.6;
         color = `rgba(246, 218, 160, ${alpha})`;
       } else {
-        // Fluctuation links: thinner, subtler
-        alpha = 0.10 + s * 0.4;
-        widthScale = 0.8 + s * 1.0;
+        // Fluctuation links: a bit brighter than before, but still softer
+        alpha = 0.16 + s * 0.5;
+        widthScale = 1.0 + s * 1.3;
         color = `rgba(201, 169, 98, ${alpha})`;
       }
 
@@ -538,3 +546,19 @@
     });
   }
 })();
+
+---
+
+After you paste this into `main.js`:
+
+1. Commit + push.
+2. Wait for GitHub Pages to rebuild (30–60s).
+3. Hard refresh the page (Cmd+Shift+R / Ctrl+Shift+R).
+
+You should see:
+
+- **No more full-network flash** when the entanglement wave kicks off.
+- **Fluctuation links** a bit brighter but still clearly “ghostly.”
+- **True entanglement links** crisp, bright, and distinct.
+
+If you want to nudge brightness or thickness further, we can now tweak just the `alpha` and `widthScale` values in the `render()` branch for `isEntangled` vs `!isEntangled`.
