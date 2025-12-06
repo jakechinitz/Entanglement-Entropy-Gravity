@@ -1,515 +1,521 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unified Entanglement-Entropy Gravity | Entropic Scalar EFT</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Entanglement Condensate</title>
+    <style>
+        /* --- 1. CSS STYLES --- */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #050508; /* Matches the animation bg */
+            overflow-x: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: #EAEAEA;
+        }
 
-    <meta name="description" content="A six-paper entanglement-entropy gravity program proposing that mass, gravity, dark matter effects, and dark energy–like behavior all emerge from how a single scalar field S_ent encodes entanglement deficits in the quantum vacuum.">
+        /* The Canvas acts as the background */
+        #tetra-canvas {
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8.60,300;8.60,400;8.60,500&display=swap" rel="stylesheet">
+        /* UI Overlay - sits on top of canvas */
+        .ui-layer {
+            position: fixed;
+            z-index: 10;
+            pointer-events: none; /* Let clicks pass through to canvas if needed */
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+            box-sizing: border-box;
+        }
 
-    <link rel="stylesheet" href="styles.css">
+        /* Top Left Phase Display */
+        #phaseDisplay {
+            font-size: 12px;
+            letter-spacing: 1.5px;
+            opacity: 0.6;
+            color: #C9A962; /* Gold accent */
+            text-transform: uppercase;
+        }
 
-    <!-- MathJax v3 -->
-    <script>
-      window.MathJax = {
-        tex: {
-          inlineMath: [['$', '$'], ['\\(', '\\)']],
-          displayMath: [['$$', '$$'], ['\\[', '\\]']]
-        },
-        svg: { fontCache: 'global' }
-      };
-    </script>
-    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        /* Bottom Right Toggle Button */
+        #toggleAnim {
+            pointer-events: auto; /* Enable clicking */
+            cursor: pointer;
+            font-size: 12px;
+            letter-spacing: 1px;
+            opacity: 0.6;
+            color: #fff;
+            align-self: flex-end;
+            transition: opacity 0.3s;
+        }
+        
+        #toggleAnim:hover {
+            opacity: 1;
+        }
 
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "Unified Entanglement-Entropy Gravity",
-      "url": "https://chinitzjake.github.io/entanglement-gravity-site/",
-      "description": "An entropic scalar EFT program where a single entanglement-entropy field S_ent(x) generates gravity, fixes Newton’s constant G, and constrains galactic dynamics and lepton masses.",
-      "creator": {
-        "@type": "Person",
-        "name": "Jake Chinitz"
-      }
-    }
-    </script>
+        /* Example Content Section to demonstrate scrolling */
+        #landing {
+            position: relative;
+            z-index: 5;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+        
+        h1 {
+            font-size: 2rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+            color: rgba(255,255,255,0.9);
+            text-align: center;
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 768px) {
+            h1 { font-size: 1.5rem; }
+        }
+    </style>
 </head>
-
 <body>
 
-    <!-- Floating controls -->
-    <button class="toggle-animation" id="toggleAnim">Animation: ON</button>
-    <div class="phase-display" id="phaseDisplay">PURE CONDENSATE</div>
+    <canvas id="tetra-canvas"></canvas>
 
-    <!-- HERO / LANDING -->
-    <section id="landing">
-        <div id="canvas-container">
-            <canvas id="tetra-canvas"></canvas>
-        </div>
+    <div class="ui-layer">
+        <div id="phaseDisplay">INITIALIZING SYSTEM...</div>
+        <div id="toggleAnim">Animation: ON</div>
+    </div>
 
-        <div class="landing-content">
-            <h1 class="title">Unified Entanglement-Entropy Gravity</h1>
-            <p class="subtitle">An Entropic Scalar EFT in Six Papers</p>
+    <div id="landing">
+        <h1>ENTANGLEMENT<br>CONDENSATE</h1>
+    </div>
 
-            <div class="abstract">
-                <p>
-                    This site presents a research program built around one simple idea:
-                    the vacuum of space is not empty, but a tightly woven network of quantum
-                    connections (entanglement). Ordinary matter is modeled as a pattern of
-                    missing connections — an <em>entanglement deficit</em> — measured by a real
-                    scalar field $S_{\text{ent}}(x)$.
-                </p>
-                <p>
-                    In this framework, mass is proportional to how much entanglement is missing
-                    (in bits), and gravity is the large-scale response of the vacuum as it tries
-                    to smooth out those deficits. The six papers linked here explore how far this
-                    picture can go: from defining a mass–information constant $\kappa_m$ and
-                    deriving Newton’s constant $G$, to explaining galaxy rotation curves,
-                    dark-matter–like and dark-energy–like effects, and regularities in the
-                    lepton mass spectrum.
-                </p>
-            </div>
+    <script>
+    class EntanglementField {
+        constructor(canvasId, options = {}) {
+            this.canvas = document.getElementById(canvasId);
+            this.phaseDisplay = options.phaseDisplayId ? document.getElementById(options.phaseDisplayId) : null;
+            
+            // Performance: Cap pixel ratio to save battery on mobile
+            this.maxDpr = 1.5; 
+            
+            this.ctx = null;
+            this.animationRunning = true;
+            this.width = 0;
+            this.height = 0;
+            this.animationFrameId = null;
 
-            <div class="key-result">
-                <strong>Key Program Claim:</strong>
-                Once you treat mass as missing entanglement and fix
-                (1) a universal mass–information constant $\kappa_m$ (using the electron as a
-                one-bit anchor) and (2) a single geometric sharing factor
-                $g_{\text{share}} \approx 7.4$ for how the vacuum redistributes that deficit,
-                the same constants can be used to derive Newton’s $G$ from microscopic inputs,
-                predict the MOND/RAR scale $a_0$, reproduce key galaxy scaling laws without
-                dark matter particles, and match the observed curvature of the
-                electron–muon–tau mass pattern.
-            </div>
+            // System State
+            this.systemPhase = 'forming';
+            this.phaseStartTime = 0;
+            this.globalTime = 0;
+            this.seedX = 0; 
+            this.seedY = 0; 
+            this.fluctuationEndTime = 0;
+            this.nucleationTriggered = false;
 
-            <!-- Top paper links -->
-            <div class="paper-links-inline">
-                <a href="paper1.html" class="paper-chip">
-                    <span class="chip-label">Paper I</span>
-                    <span class="chip-title">Entanglement Entropy &amp; Gravity</span>
-                </a>
-                <a href="paper2.html" class="paper-chip">
-                    <span class="chip-label">Paper II</span>
-                    <span class="chip-title">GFT / Tensor Underpinnings</span>
-                </a>
-                <a href="paper3.html" class="paper-chip">
-                    <span class="chip-label">Paper III</span>
-                    <span class="chip-title">Derivations &amp; Numerics</span>
-                </a>
-                <a href="paper4.html" class="paper-chip">
-                    <span class="chip-label">Paper IV</span>
-                    <span class="chip-title">Foundations of $g_{\\text{share}}$</span>
-                </a>
-                <a href="paper5.html" class="paper-chip">
-                    <span class="chip-label">Paper V</span>
-                    <span class="chip-title">De Novo $G$</span>
-                </a>
-                <a href="paper6.html" class="paper-chip">
-                    <span class="chip-label">Paper VI</span>
-                    <span class="chip-title">Microstructure &amp; Phenomenology</span>
-                </a>
-            </div>
-        </div>
+            this.phases = {
+                forming: { duration: 3000, next: 'pure' },
+                pure: { duration: 2000, next: 'fluctuating' },
+                fluctuating: { duration: Infinity, next: 'spreading' },
+                spreading: { duration: 18000, next: 'saturated' },
+                saturated: { duration: 5000, next: 'dissolving' },
+                dissolving: { duration: Infinity, next: 'fluctuating' }
+            };
 
-        <div class="scroll-indicator" onclick="document.getElementById('content').scrollIntoView({behavior: 'smooth'})">
-            <span class="scroll-text">Layperson Overview</span>
-            <div class="scroll-arrow"></div>
-        </div>
-    </section>
+            if (this.canvas) {
+                // 'alpha: false' tells browser the background is opaque = faster rendering
+                this.ctx = this.canvas.getContext('2d', { alpha: false }); 
+                this.bindEvents();
+                this.resizeCanvas(); 
+                this.start();
+            }
+        }
 
-    <!-- MAIN EXPLANATION -->
-    <section id="content">
-        <div class="content-wrapper">
+        updateGeometryConstants() {
+            // Mobile Detection
+            const isMobile = this.width < 768; 
+            
+            // Mobile: Smaller triangles, tighter spacing
+            // Desktop: Larger, more spread out
+            this.SPACING = isMobile ? 28 : 38; 
+            this.TETRA_SIZE = isMobile ? 9 : 12; 
+            
+            this.SQRT3_2 = Math.sqrt(3) / 2;
+            this.TETRA_H = this.TETRA_SIZE * this.SQRT3_2;
+            this.CRITICAL_CONNECTIONS = 3;
 
-            <h2 class="section-title">What is this theory about?</h2>
-            <p>
-                The central proposal is that gravity is not a separate, fundamental force but the
-                macroscopic response of an underlying quantum-information medium. A single real
-                scalar field $S_{\text{ent}}(x)$ measures how far each region of space is from a
-                maximally entangled vacuum state. Wherever this field has a positive value, the
-                vacuum is “missing” some entanglement links. Those missing links are interpreted
-                as mass, and the way the vacuum rearranges itself around them shows up as
-                spacetime curvature.
-            </p>
+            this.triVerts = [
+                { x: 0, y: -this.TETRA_H * 0.6 },
+                { x: -this.TETRA_SIZE / 2, y: this.TETRA_H * 0.4 },
+                { x: this.TETRA_SIZE / 2, y: this.TETRA_H * 0.4 }
+            ];
 
-            <h2 class="section-title">Part 1: Why a New Perspective on Gravity and the Cosmos?</h2>
-            <p>
-                Modern physics is anchored by two highly successful frameworks:
-            </p>
-            <div class="highlight-box">
-                <h4>The Two Pillars</h4>
-                <ul class="compact-list">
-                    <li><strong>Quantum Mechanics:</strong> Governs the probabilistic behavior of particles, fields, and energy at microscopic scales.</li>
-                    <li><strong>General Relativity:</strong> Describes gravity as the curvature of spacetime produced by mass and energy at large scales.</li>
-                </ul>
-            </div>
-            <p>
-                Each theory works extremely well in its own regime. The difficulty appears when we
-                try to apply both at once — near black holes, at the Big Bang, or at very small
-                distances. Standard methods for combining quantum fields with curved spacetime
-                often produce infinities or contradictions.
-            </p>
-            <p>
-                At the same time, our current cosmological model leans heavily on two invisible
-                ingredients:
-            </p>
-            <p>
-                <strong>Dark Matter:</strong> added to explain why galaxies rotate as if they
-                contain far more mass than we can see in stars and gas.<br>
-                <strong>Dark Energy:</strong> introduced to explain why the expansion of the
-                universe appears to be accelerating rather than slowing down.
-            </p>
-            <p>
-                Together, these unseen components are claimed to make up about 95% of the
-                universe’s energy content. Yet, despite decades of searches, we have no direct
-                non-gravitational evidence for what they are.
-            </p>
-            <p>
-                This program explores a different possibility: that gravity, dark-matter–like
-                behavior, and dark-energy–like behavior are not separate substances, but emergent
-                consequences of how quantum information is arranged and redistributed in spacetime.
-            </p>
+            this.faceCenters = [
+                { x: 0, y: -this.TETRA_H * 0.25 },
+                { x: -this.TETRA_SIZE * 0.22, y: this.TETRA_H * 0.15 },
+                { x: this.TETRA_SIZE * 0.22, y: this.TETRA_H * 0.15 },
+                { x: 0, y: this.TETRA_H * 0.05 }
+            ];
+        }
 
-            <h2 class="section-title">What problems is it trying to solve?</h2>
-            <p>
-                The six papers are organized around a set of linked questions:
-            </p>
-            <div class="highlight-box">
-                <h4>Target Problems</h4>
-                <ul class="compact-list">
-                    <li>
-                        <strong>Why is $G$ what it is?</strong> In standard physics, Newton’s
-                        constant is a measured input. Here, $G$ is derived from an information
-                        density at the Planck scale, a mass–information constant $\kappa_m$, and a
-                        single geometric sharing factor $g_{\text{share}}$.
-                    </li>
-                    <li>
-                        <strong>Galaxy rotation &amp; the RAR:</strong> Flat rotation curves and
-                        the radial acceleration relation are reproduced without dark matter
-                        particles, via an entropic response of the vacuum encoded by $S_{\text{ent}}$.
-                    </li>
-                    <li>
-                        <strong>Lepton mass pattern:</strong> The electron, muon, and tau masses
-                        follow a regular log-quadratic pattern. The curvature of that pattern is
-                        tied, in this framework, to the same microscopic constant $g_{\text{share}}$.
-                    </li>
-                    <li>
-                        <strong>Cosmic acceleration:</strong> The apparent speed-up in cosmic
-                        expansion is reinterpreted in terms of entanglement-controlled time
-                        dilation between voids and matter-rich regions, rather than a new dark
-                        energy fluid.
-                    </li>
-                </ul>
-            </div>
+        bindEvents() {
+            let resizeTimeout;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => this.resizeCanvas(), 200);
+            });
+        }
 
-            <h2 class="section-title">Part 2: The Universe as an Entanglement Network</h2>
-            <p>
-                The framework starts from a shift in how we view the vacuum. Instead of “empty
-                space,” we imagine an underlying web of quantum correlations connecting every
-                region of space to every other. In physics, these connections are called
-                <strong>entanglement</strong>.
-            </p>
-            <p>
-                In this picture, a perfectly “empty” vacuum is not the absence of structure, but
-                the state where this web is as richly and evenly connected as possible. Geometry
-                — distances, angles, and curvature — is the large-scale appearance of how this
-                web is arranged.
-            </p>
-            <p>
-                Matter is then reinterpreted. An electron, for example, is not a tiny billiard
-                ball sitting inside space. It is a small region where the usual entanglement
-                links have been disrupted or removed. The web is less connected there.
-            </p>
-            <h3>Mass as Entanglement Deficit</h3>
-            <p>
-                This leads to a new definition:
-                a particle’s mass is proportional to how much entanglement is missing compared to
-                the vacuum. The field $S_{\text{ent}}(x)$ measures this “entanglement deficit”
-                at each point in space.
-            </p>
-            <div class="equation">
-                \( m = \kappa_m \times S_{\text{ent}} \).
-            </div>
-            <p>
-                Here, $S_{\text{ent}}$ is measured in bits and $m$ in kilograms. The constant
-                $\kappa_m$ converts “missing information” into ordinary inertial mass.
-            </p>
-            <p>
-                A key calibration in this program is:
-                a single free electron corresponds to exactly <strong>1 bit</strong> of
-                vacuum-subtracted entanglement entropy at its natural length scale. Once that
-                one-bit anchor is imposed, $\kappa_m$ is fixed, and every other mass and
-                gravitational effect must be consistent with that choice.
-            </p>
+        resizeCanvas() {
+            if (!this.canvas || !this.ctx) return;
+            
+            const dpr = Math.min(window.devicePixelRatio || 1, this.maxDpr);
+            this.width = window.innerWidth;
+            this.height = window.innerHeight;
 
-            <h2 class="section-title">Part 3: Deriving Gravity from Information</h2>
-            <p>
-                Once mass is defined as an entanglement deficit, gravity can be viewed as the
-                vacuum’s attempt to smooth out those deficits. Regions with more missing
-                entanglement pull more strongly on the surrounding web as the system tries to
-                rebalance its connections. At large scales, this rebalancing looks like the
-                familiar attraction between massive bodies and the bending of spacetime.
-            </p>
-            <p>
-                Technically, the theory is formulated as an effective field theory for the scalar
-                field $S_{\text{ent}}(x)$. Gradients and time-variations of this field contribute
-                to the stress–energy that curves spacetime, modifying Einstein’s equations in a
-                controlled way.
-            </p>
-            <p>
-                A central test of this picture is whether it can explain the strength of gravity,
-                encoded in Newton’s constant $G$, without simply measuring it and inserting the
-                number by hand.
-            </p>
-            <div class="highlight-box">
-                <h4>First-Principles Derivation of $G$</h4>
-                <ol>
-                    <li>
-                        Begin with a <strong>Planck-scale anchor</strong>:
-                        interpret the maximum “tension” of the vacuum as an information density
-                        at the smallest meaningful scale.
-                    </li>
-                    <li>
-                        Introduce a <strong>geometric sharing factor</strong>
-                        $g_{\text{share}} \approx 7.4$, which counts how many independent
-                        “channels” the vacuum uses to redistribute the entanglement deficit
-                        created by a particle. In the more microscopic model, this constant is
-                        tied to a spin-3 condensate and comes out close to $\ln(1680)$, a pure
-                        number with no units.
-                    </li>
-                    <li>
-                        Impose the <strong>electron calibration</strong>: at the electron’s
-                        length scale, a single electron carries exactly 1 bit of entanglement
-                        deficit, so $\kappa_m$ must reproduce the known electron mass.
-                    </li>
-                </ol>
-                <p style="margin-top: 1rem;">
-                    Following how the entanglement deficit spreads from the Planck scale out to
-                    the electron scale, and accounting for the geometric sharing encoded in
-                    $g_{\text{share}}$, yields a theoretical value for Newton’s $G$ that matches
-                    the observed $6.67 \times 10^{-11}\,\text{m}^3\text{kg}^{-1}\text{s}^{-2}$.
-                    In this framework, the strength of gravity is set by how efficiently the
-                    vacuum can distribute one bit of missing entanglement around a particle.
-                </p>
-            </div>
+            this.canvas.width = this.width * dpr;
+            this.canvas.height = this.height * dpr;
+            this.ctx.scale(dpr, dpr);
 
-            <h2 class="section-title">Part 4: Entropic Dynamics in Galaxies</h2>
-            <p>
-                The same field $S_{\text{ent}}$ that defines mass also extends over large
-                distances. In a galaxy, the entanglement deficits from billions of stars and gas
-                clouds do not stay sharply localized. They spread out and form a smooth,
-                long-range gradient.
-            </p>
-            <p>
-                This gradient behaves like an extra gravitational potential. Not because there is
-                additional unseen matter, but because the vacuum’s entanglement structure has
-                been distorted on galactic scales. The result is an <strong>entropic halo</strong>
-                surrounding the visible galaxy.
-            </p>
-            <ul>
-                <li>
-                    <strong>The Entropic Halo:</strong> Instead of a halo of invisible particles,
-                    the galaxy is embedded in a halo of elevated entanglement deficit — an
-                    “information potential” generated by the vacuum’s response to the visible
-                    mass.
-                </li>
-                <li>
-                    <strong>Predictive Power:</strong> In the outer parts of galaxies, where the
-                    usual Newtonian pull from visible matter is very weak, this entropic
-                    contribution becomes dominant. The framework analytically reproduces the
-                    <strong>Baryonic Tully–Fisher Relation</strong> ($v^4 \propto M$), connecting a
-                    galaxy’s rotation speed to its visible baryonic mass.
-                </li>
-            </ul>
-            <p>
-                From this point of view, the “missing mass” problem is reframed. The extra
-                gravitational pull we attribute to dark matter arises from the way the
-                entanglement field responds to large-scale structure, not from a new population
-                of unseen particles.
-            </p>
+            this.updateGeometryConstants();
+            this.initSystem();
+        }
 
-            <h2 class="section-title">Part 5: Cosmic Acceleration and Time Dilation</h2>
-            <p>
-                General Relativity already tells us that gravity affects time: clocks run more
-                slowly in stronger gravitational fields. This framework extends that idea and
-                ties the local “speed of time” to the local entanglement structure of the vacuum.
-            </p>
-            <p>
-                Regions that are closer to the maximally entangled vacuum — with fewer matter-induced
-                deficits — are proposed to experience slightly faster proper time. Cosmic voids,
-                the enormous underdense regions between galaxy clusters, are then places where
-                $S_{\text{ent}}$ is closest to its vacuum value and entanglement is most complete.
-            </p>
-            <p>
-                Denser regions, like galaxies and clusters, contain more entanglement deficits
-                and therefore run slightly “slower” in this entropic sense. When light from
-                distant supernovae travels to us, it passes through large stretches of high-entanglement
-                voids. Over cosmological distances, even tiny differences in the local rate of
-                time can accumulate into a noticeable effect.
-            </p>
-            <p>
-                In this interpretation, at least part of the observed cosmic acceleration can be
-                understood as a large-scale time-dilation pattern generated by the entanglement
-                structure of the vacuum. What we currently model as dark energy may be, in part,
-                a relativistic frame effect produced by entropic time dilation across the cosmic
-                web.
-            </p>
+        initSystem() {
+            const cols = Math.ceil(this.width / this.SPACING) + 2;
+            const rows = Math.ceil(this.height / (this.SPACING * 0.866)) + 2;
+            
+            const totalGridW = (cols - 1) * this.SPACING;
+            const totalGridH = (rows - 1) * this.SPACING * 0.866;
+            const offsetX = (this.width - totalGridW) / 2;
+            const offsetY = (this.height - totalGridH) / 2;
+            
+            this.tetraCount = cols * rows;
+            // Cap particles for performance
+            if (this.tetraCount > 3000) this.tetraCount = 3000;
 
-            <h2 class="section-title">Part 6: Many Pasts and Entropic Selection</h2>
-            <p>
-                The final piece of the program asks how far an information-based view can be
-                pushed. Standard quantum mechanics treats the future as a branching set of
-                possibilities but usually treats the past as fixed. This framework explores what
-                happens if we relax that assumption and treat entire spacetime histories as
-                quantum objects.
-            </p>
-            <p>
-                The <strong>Many-Pasts Hypothesis</strong> views the universe’s history as a
-                superposition of many possible pasts and futures, all of which must be
-                consistent with the present state we observe.
-            </p>
-            <ul class="compact-list">
-                <li>
-                    <strong>Consistency Filter:</strong> Histories that cannot lead to the
-                    observed present, once all physical constraints are enforced, interfere
-                    destructively and effectively drop out.
-                </li>
-                <li>
-                    <strong>Entropic Selection:</strong> Among the remaining consistent histories,
-                    those that generate more entanglement — more complex, richly structured
-                    universes — are given much higher weight.
-                </li>
-            </ul>
-            <p>
-                This provides a possible explanation for why the universe appears so “well-tuned”
-                for structure, chemistry, and life. Histories that fizzle out into featureless
-                simplicity generate little entanglement and contribute weakly. Histories that
-                develop galaxies, stars, molecules, and eventually observers like us generate
-                vast amounts of entanglement and dominate the quantum weighting.
-            </p>
+            this.tetraX = new Float32Array(this.tetraCount);
+            this.tetraY = new Float32Array(this.tetraCount);
+            this.tetraRotation = new Float32Array(this.tetraCount);
+            this.tetraOpacity = new Float32Array(this.tetraCount);
+            this.tetraEntanglement = new Float32Array(this.tetraCount);
+            this.tetraActivationTime = new Float32Array(this.tetraCount);
+            this.tetraConnectionCount = new Uint8Array(this.tetraCount);
+            this.tetraFaceStates = new Float32Array(this.tetraCount * 4);
+            
+            let idx = 0;
+            for (let i = 0; i < rows; i++) {
+                for (let j = 0; j < cols; j++) {
+                    if (idx >= this.tetraCount) break;
+                    this.tetraX[idx] = offsetX + j * this.SPACING + (i % 2) * (this.SPACING / 2);
+                    this.tetraY[idx] = offsetY + i * this.SPACING * 0.866;
+                    this.tetraRotation[idx] = Math.random() * Math.PI * 2;
+                    this.tetraOpacity[idx] = 0;
+                    this.tetraEntanglement[idx] = 0;
+                    this.tetraActivationTime[idx] = Infinity;
+                    this.tetraConnectionCount[idx] = 0;
+                    for (let f = 0; f < 4; f++) this.tetraFaceStates[idx * 4 + f] = 0.3 + Math.random() * 0.7;
+                    idx++;
+                }
+            }
+            
+            const lines = [];
+            const distLimit = this.SPACING * 1.2;
+            
+            for (let i = 0; i < this.tetraCount; i++) {
+                for (let j = i + 1; j < this.tetraCount; j++) {
+                    const dx = this.tetraX[i] - this.tetraX[j];
+                    const dy = this.tetraY[i] - this.tetraY[j];
+                    if (Math.abs(dx) > distLimit || Math.abs(dy) > distLimit) continue;
+                    if ((dx * dx + dy * dy) < (distLimit * distLimit)) lines.push([i, j]);
+                }
+            }
+            
+            this.lineCount = lines.length;
+            this.lineT1 = new Uint16Array(this.lineCount);
+            this.lineT2 = new Uint16Array(this.lineCount);
+            this.lineStrength = new Float32Array(this.lineCount);
+            this.lineActivationTime = new Float32Array(this.lineCount);
+            this.lineIsFluctuation = new Uint8Array(this.lineCount);
+            this.lineFlickerEnd = new Float32Array(this.lineCount);
+            
+            for (let i = 0; i < this.lineCount; i++) {
+                this.lineT1[i] = lines[i][0];
+                this.lineT2[i] = lines[i][1];
+                this.lineStrength[i] = 0;
+                this.lineActivationTime[i] = Infinity;
+                this.lineIsFluctuation[i] = 0;
+                this.lineFlickerEnd[i] = 0;
+            }
+            
+            this.systemPhase = 'forming';
+            this.phaseStartTime = this.globalTime;
+            this.nucleationTriggered = false;
+            this.fluctuationEndTime = 0;
+        }
 
-            <div class="highlight-box">
-                <h4>The Six-Paper Program</h4>
-                <h2 style="margin-top: 0;">Summary</h2>
-                <p>
-                    The detailed arguments are distributed across six papers:
-                </p>
-                <ol class="compact-list">
-                    <li>
-                        <strong>Entanglement Entropy: Unifying the Quantum Origins of Gravity, Mass, Time, and Cosmic Structure</strong> –
-                        defines $S_{\text{ent}}(x)$, $\kappa_m$, and the broad emergent picture.
-                    </li>
-                    <li>
-                        <strong>Supplement: Group Field / Tensor Underpinnings of the Entropic Scalar EFT</strong> –
-                        builds the discrete microstructure and coarse-graining flow.
-                    </li>
-                    <li>
-                        <strong>Derivations and Numerical Validations for the Entropic Scalar EFT</strong> –
-                        pins down the action, units, and numerics for $\kappa_m$ and galactic scaling.
-                    </li>
-                    <li>
-                        <strong>Theoretical Foundations of the Wedge-Sharing Constant $g_{\text{share}}$</strong> –
-                        geometric derivation and random-walk persistence bounds.
-                    </li>
-                    <li>
-                        <strong>Entanglement–Scalar Derivation of $G$ (De Novo $G$)</strong> –
-                        shows how $G$ is fixed once $g_{\text{share}}$ is specified.
-                    </li>
-                    <li>
-                        <strong>Microstructure &amp; Phenomenological Supplement</strong> –
-                        RAR / $a_0$ derivation, lepton shell Hamiltonian, Hawking-like checks, and spin-3 condensate consistency.
-                    </li>
-                </ol>
-                <ul class="compact-list">
-                    <li><strong>Spacetime</strong> is the large-scale appearance of an entanglement network.</li>
-                    <li><strong>Mass</strong> is stored missing information.</li>
-                    <li><strong>Gravity</strong> is the tension of that information network.</li>
-                    <li><strong>Dark-matter–like effects</strong> are the “shadow” of that tension on galactic scales.</li>
-                    <li><strong>Dark-energy–like behavior</strong> is the time-distortion of the network across cosmic voids.</li>
-                    <li><strong>Cosmic history</strong> is biased toward maximal growth of entanglement and complexity.</li>
-                </ul>
-                <p>
-                    You can read each paper directly from this site via the “Papers” menu or the links above.
-                </p>
-            </div>
+        updateFluctuation() {
+            const flickerChance = 0.0018;
+            const flickerDuration = 1200 + Math.random() * 1500;
+            this.tetraConnectionCount.fill(0);
+            
+            for (let i = 0; i < this.lineCount; i++) {
+                if (this.lineIsFluctuation[i] === 0 && this.lineStrength[i] < 0.01 && Math.random() < flickerChance) {
+                    this.lineIsFluctuation[i] = 1;
+                    this.lineFlickerEnd[i] = this.globalTime + flickerDuration;
+                }
+                if (this.lineIsFluctuation[i] === 1 && this.globalTime > this.lineFlickerEnd[i]) {
+                    this.lineIsFluctuation[i] = 0;
+                }
+                if (this.lineIsFluctuation[i] === 1) {
+                    this.lineStrength[i] += (0.85 - this.lineStrength[i]) * 0.05;
+                    this.tetraConnectionCount[this.lineT1[i]]++;
+                    this.tetraConnectionCount[this.lineT2[i]]++;
+                } else if (this.lineActivationTime[i] === Infinity) {
+                    this.lineStrength[i] *= 0.94;
+                }
+            }
+            
+            if (!this.nucleationTriggered && this.globalTime > this.fluctuationEndTime) {
+                for (let i = 0; i < this.tetraCount; i++) {
+                    if (this.tetraConnectionCount[i] >= this.CRITICAL_CONNECTIONS) {
+                        this.nucleationTriggered = true;
+                        this.seedIdx = i;
+                        this.seedX = this.tetraX[i];
+                        this.seedY = this.tetraY[i];
+                        this.lineIsFluctuation.fill(0);
+                        this.systemPhase = 'spreading';
+                        this.phaseStartTime = this.globalTime;
+                        this.startEntanglementWave();
+                        return;
+                    }
+                }
+            }
+            
+            for (let i = 0; i < this.tetraCount; i++) {
+                const targetEnt = this.tetraConnectionCount[i] > 0 ? this.tetraConnectionCount[i] * 0.18 : 0;
+                this.tetraEntanglement[i] += (targetEnt - this.tetraEntanglement[i]) * 0.04;
+            }
+        }
 
-        </div>
-    </section>
+        startEntanglementWave() {
+            const waveSpeed = 0.05;
+            for (let i = 0; i < this.tetraCount; i++) {
+                const dx = this.tetraX[i] - this.seedX;
+                const dy = this.tetraY[i] - this.seedY;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                this.tetraActivationTime[i] = this.globalTime + dist / waveSpeed;
+            }
+            for (let i = 0; i < this.lineCount; i++) {
+                const t1Time = this.tetraActivationTime[this.lineT1[i]];
+                const t2Time = this.tetraActivationTime[this.lineT2[i]];
+                this.lineActivationTime[i] = Math.max(t1Time, t2Time) + 80;
+            }
+        }
 
-    <!-- Sidebar + overlay -->
-    <button class="sidebar-toggle" id="sidebarToggle">Papers</button>
-    <div class="overlay" id="overlay"></div>
+        updatePhase() {
+            const elapsed = this.globalTime - this.phaseStartTime;
+            const phase = this.phases[this.systemPhase];
 
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <h3>The Papers</h3>
-            <button class="close-sidebar" id="closeSidebar">×</button>
-        </div>
-        <div class="paper-list">
-            <div class="paper-item" onclick="window.location.href='paper1.html'">
-                <div class="paper-number">Paper I</div>
-                <div class="paper-title">Entanglement Entropy: Unifying the Quantum Origins of Gravity, Mass, Time, and Cosmic Structure</div>
-                <div class="paper-desc">
-                    Defines $S_{\\text{ent}}(x)$, the mass–information constant $\\kappa_m$, and how
-                    entanglement deficits source curvature, linking black holes, galaxies, and temporal order.
-                </div>
-            </div>
-            <div class="paper-item" onclick="window.location.href='paper2.html'">
-                <div class="paper-number">Paper II</div>
-                <div class="paper-title">Supplement: Group Field / Tensor Underpinnings of the Entropic Scalar EFT</div>
-                <div class="paper-desc">
-                    Builds the spin-network / tensor-network microstructure whose coarse-graining yields the
-                    entanglement-scalar EFT and introduces the sharing factor $g_{\\text{share}}$.
-                </div>
-            </div>
-            <div class="paper-item" onclick="window.location.href='paper3.html'">
-                <div class="paper-number">Paper III</div>
-                <div class="paper-title">Derivations and Numerical Validations for the Entropic Scalar EFT</div>
-                <div class="paper-desc">
-                    Fixes the action, units, and normalizations; derives $\\kappa_m$ from Planck to electron
-                    scales and validates the framework with toy models and galactic scaling.
-                </div>
-            </div>
-            <div class="paper-item" onclick="window.location.href='paper4.html'">
-                <div class="paper-number">Paper IV</div>
-                <div class="paper-title">Theoretical Foundations of the Wedge-Sharing Constant g_share</div>
-                <div class="paper-desc">
-                    Geometric calculation of cone angles, persistence multipliers, and conservative bounds
-                    leading to $g_{\\text{share}} \\approx 7.4$ with a reproducible script.
-                </div>
-            </div>
-            <div class="paper-item" onclick="window.location.href='paper5.html'">
-                <div class="paper-number">Paper V</div>
-                <div class="paper-title">Entanglement–Scalar Derivation of G (De Novo G)</div>
-                <div class="paper-desc">
-                    Shows how Newton’s constant is fixed from $\\kappa_m$ and $g_{\\text{share}}$ alone, using
-                    the electron as the 1-bit anchor and no gravitational data as input.
-                </div>
-            </div>
-            <div class="paper-item" onclick="window.location.href='paper6.html'">
-                <div class="paper-number">Paper VI</div>
-                <div class="paper-title">Microstructure &amp; Phenomenological Supplement</div>
-                <div class="paper-desc">
-                    Derives the RAR / $a_0$ interpolation, ties lepton curvature to $(5/3)g_{\\text{share}}$,
-                    and cross-checks $g_{\\text{share}}$ with Hawking-like wedge sharing and a spin-3 condensate.
-                </div>
-            </div>
-        </div>
-    </aside>
+            if (this.phaseDisplay) {
+                let text = '';
+                switch(this.systemPhase) {
+                    case 'forming': text = 'FORMING CONDENSATE'; break;
+                    case 'pure': text = 'PURE CONDENSATE'; break;
+                    case 'fluctuating': text = 'QUANTUM FLUCTUATIONS'; break;
+                    case 'spreading': text = 'ENTANGLEMENT SPREADING'; break;
+                    case 'saturated': text = 'SATURATED STATE'; break;
+                    case 'dissolving': text = 'DISSOLVING'; break;
+                }
+                if (this.phaseDisplay.textContent !== text) this.phaseDisplay.textContent = text;
+            }
 
-    <footer>
-        <p>
-            Full program deposit on
-            <a href="https://zenodo.org/records/17216918" target="_blank" rel="noopener noreferrer">Zenodo</a>
-        </p>
-    </footer>
+            switch (this.systemPhase) {
+                case 'forming':
+                case 'pure':
+                    for (let i = 0; i < this.tetraCount; i++) {
+                        const target = (this.systemPhase === 'forming' && elapsed < i * 1.8) ? 0 : 1;
+                        this.tetraOpacity[i] += (target - this.tetraOpacity[i]) * 0.02;
+                    }
+                    break;
+                case 'fluctuating':
+                    if (this.fluctuationEndTime === 0) this.fluctuationEndTime = this.globalTime + 5000 + Math.random() * 5000;
+                    this.updateFluctuation();
+                    return;
+                case 'spreading':
+                    for (let i = 0; i < this.lineCount; i++) {
+                        if (this.lineActivationTime[i] === Infinity || this.globalTime < this.lineActivationTime[i]) this.lineStrength[i] *= 0.96;
+                    }
+                    for (let i = 0; i < this.tetraCount; i++) {
+                        if (this.globalTime > this.tetraActivationTime[i]) this.tetraEntanglement[i] += (1 - this.tetraEntanglement[i]) * 0.005;
+                    }
+                    for (let i = 0; i < this.lineCount; i++) {
+                        if (this.globalTime > this.lineActivationTime[i]) this.lineStrength[i] += (1 - this.lineStrength[i]) * 0.005;
+                    }
+                    break;
+                case 'dissolving':
+                    let maxLine = 0;
+                    for (let i = 0; i < this.lineCount; i++) {
+                        this.lineStrength[i] *= 0.90;
+                        if (this.lineStrength[i] > maxLine) maxLine = this.lineStrength[i];
+                    }
+                    for (let i = 0; i < this.tetraCount; i++) this.tetraEntanglement[i] *= 0.96;
 
-    <script src="main.js"></script>
+                    if (maxLine < 0.03 && elapsed > 1500) {
+                        this.systemPhase = 'fluctuating';
+                        this.phaseStartTime = this.globalTime;
+                        this.nucleationTriggered = false;
+                        this.fluctuationEndTime = 0;
+                        this.tetraActivationTime.fill(Infinity);
+                        this.tetraConnectionCount.fill(0);
+                        this.lineStrength.fill(0);
+                        this.lineActivationTime.fill(Infinity);
+                        this.lineIsFluctuation.fill(0);
+                        this.lineFlickerEnd.fill(0);
+                    }
+                    return;
+            }
+
+            if (phase && phase.duration !== Infinity && elapsed > phase.duration) {
+                this.systemPhase = phase.next;
+                this.phaseStartTime = this.globalTime;
+                if (this.systemPhase === 'forming') this.initSystem();
+            }
+        }
+
+        render() {
+            if (!this.ctx) return;
+            this.ctx.fillStyle = '#050508';
+            this.ctx.fillRect(0, 0, this.width, this.height);
+            this.ctx.lineCap = 'round';
+            
+            for (let i = 0; i < this.lineCount; i++) {
+                const s = this.lineStrength[i];
+                if (s < 0.02) continue;
+                
+                const x1 = this.tetraX[this.lineT1[i]], y1 = this.tetraY[this.lineT1[i]];
+                const x2 = this.tetraX[this.lineT2[i]], y2 = this.tetraY[this.lineT2[i]];
+                const isTrue = this.lineActivationTime[i] !== Infinity && this.globalTime > this.lineActivationTime[i];
+                
+                this.ctx.beginPath();
+                this.ctx.moveTo(x1, y1);
+                this.ctx.lineTo(x2, y2);
+                
+                if (isTrue) {
+                    this.ctx.strokeStyle = `rgba(255, 210, 120, ${s * 0.85})`;
+                    this.ctx.lineWidth = 1.5 + s * 2.5;
+                    this.ctx.stroke();
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(x1, y1);
+                    this.ctx.lineTo(x2, y2);
+                    this.ctx.strokeStyle = `rgba(201, 169, 98, ${s * 0.3})`;
+                    this.ctx.lineWidth = 4 + s * 4;
+                    this.ctx.stroke();
+                } else {
+                    this.ctx.strokeStyle = `rgba(201, 169, 98, ${s * 0.55})`;
+                    this.ctx.lineWidth = 1 + s * 1.5;
+                    this.ctx.stroke();
+                }
+            }
+            
+            for (let i = 0; i < this.tetraCount; i++) {
+                const op = this.tetraOpacity[i];
+                if (op < 0.02) continue;
+                
+                const x = this.tetraX[i], y = this.tetraY[i], ent = this.tetraEntanglement[i];
+                this.tetraRotation[i] += 0.0015 + ent * 0.0015;
+                
+                this.ctx.save();
+                this.ctx.translate(x, y);
+                this.ctx.rotate(this.tetraRotation[i]);
+                this.ctx.beginPath();
+                this.ctx.moveTo(this.triVerts[0].x, this.triVerts[0].y);
+                this.ctx.lineTo(this.triVerts[1].x, this.triVerts[1].y);
+                this.ctx.lineTo(this.triVerts[2].x, this.triVerts[2].y);
+                this.ctx.closePath();
+                
+                const r = 20 + ent * 54, g = 45 + ent * 79, b = 35 + ent * 54;
+                this.ctx.fillStyle = `rgba(${r|0}, ${g|0}, ${b|0}, ${op * (0.45 + ent * 0.5)})`;
+                this.ctx.fill();
+                this.ctx.strokeStyle = `rgba(201, 169, 98, ${op * (0.3 + ent * 0.5)})`;
+                this.ctx.lineWidth = 0.5 + ent * 1.2;
+                this.ctx.stroke();
+                
+                const faceBaseAlpha = op * (0.55 + ent * 0.45), faceSize = 2 + ent * 2;
+                for (let f = 0; f < 4; f++) {
+                    const fc = this.faceCenters[f];
+                    this.ctx.beginPath();
+                    this.ctx.arc(fc.x, fc.y, faceSize * 0.7, 0, Math.PI * 2);
+                    this.ctx.fillStyle = `rgba(255, 230, 180, ${faceBaseAlpha * this.tetraFaceStates[i * 4 + f]})`;
+                    this.ctx.fill();
+                }
+                this.ctx.restore();
+            }
+            
+            if (this.systemPhase === 'spreading' && this.seedX !== undefined) {
+                const elapsed = this.globalTime - this.phaseStartTime;
+                const radius = elapsed * 0.05, alpha = Math.max(0, 0.4 - radius * 0.00018);
+                if (alpha > 0.01) {
+                    this.ctx.beginPath();
+                    this.ctx.arc(this.seedX, this.seedY, radius, 0, Math.PI * 2);
+                    this.ctx.strokeStyle = `rgba(201, 169, 98, ${alpha})`;
+                    this.ctx.lineWidth = 2;
+                    this.ctx.stroke();
+                }
+            }
+        }
+
+        toggle() {
+            this.animationRunning = !this.animationRunning;
+            if (!this.animationRunning && this.ctx) {
+                this.ctx.fillStyle = '#050508';
+                this.ctx.fillRect(0, 0, this.width, this.height);
+            }
+            return this.animationRunning;
+        }
+
+        animate(time) {
+            this.globalTime = time;
+            if (this.animationRunning) {
+                this.updatePhase();
+                this.render();
+            }
+            this.animationFrameId = requestAnimationFrame((t) => this.animate(t));
+        }
+
+        start() {
+            if (!this.animationFrameId) this.animate(performance.now());
+        }
+    }
+
+    // --- 4. INITIALIZATION ---
+    document.addEventListener('DOMContentLoaded', () => {
+        const field = new EntanglementField('tetra-canvas', {
+            phaseDisplayId: 'phaseDisplay'
+        });
+
+        const toggleBtn = document.getElementById('toggleAnim');
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => {
+                const isRunning = field.toggle();
+                toggleBtn.textContent = isRunning ? 'Animation: ON' : 'Animation: OFF';
+            });
+        }
+    });
+    </script>
 </body>
 </html>
