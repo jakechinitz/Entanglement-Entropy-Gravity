@@ -44,7 +44,8 @@
     fluctuating: { duration: Infinity, next: 'spreading' },
     spreading: { duration: 18000, next: 'saturated' },
     saturated: { duration: 5000, next: 'dissolving' },
-    dissolving: { duration: 3500, next: 'forming' }
+    // dissolving will control its own transition based on link fadeout
+    dissolving: { duration: Infinity, next: 'fluctuating' }
   };
 
   const triVerts = [
@@ -253,12 +254,13 @@
           fluctuationEndTime = globalTime + 5000 + Math.random() * 5000; // 5–10 s
         }
         updateFluctuation();
+        // Fluctuating phase controls its own transition via nucleation
         return;
 
       case 'spreading':
         if (phaseDisplay) phaseDisplay.textContent = 'ENTANGLEMENT SPREADING';
 
-        // Fade out any remaining fluctuation lines
+        // Fade out any remaining fluctuation-only lines
         for (let i = 0; i < lineCount; i++) {
           if (lineActivationTime[i] === Infinity || globalTime < lineActivationTime[i]) {
             lineStrength[i] *= 0.96;
@@ -280,24 +282,53 @@
 
       case 'saturated':
         if (phaseDisplay) phaseDisplay.textContent = 'SATURATED STATE';
+        // Let everything sit at near-maximum
         break;
 
       case 'dissolving':
         if (phaseDisplay) phaseDisplay.textContent = 'DISSOLVING';
-        for (let i = 0; i < tetraCount; i++) {
-          tetraOpacity[i] *= 0.99;
-          tetraEntanglement[i] *= 0.99;
-        }
+        // Fade all entanglement links together; keep the condensate visible
+        let maxLine = 0;
         for (let i = 0; i < lineCount; i++) {
-          lineStrength[i] *= 0.99;
+          // Strong uniform decay
+          lineStrength[i] *= 0.90;
+          if (lineStrength[i] > maxLine) maxLine = lineStrength[i];
         }
-        break;
+
+        // Optionally let entanglement relax slightly but not vanish
+        for (let i = 0; i < tetraCount; i++) {
+          tetraEntanglement[i] *= 0.98;
+        }
+
+        // When links are essentially gone, restart quantum fluctuations (no full reset)
+        if (maxLine < 0.03 && elapsed > 1500) {
+          systemPhase = 'fluctuating';
+          phaseStartTime = globalTime;
+          nucleationTriggered = false;
+          fluctuationEndTime = 0;
+
+          // Clear entanglement-wave bookkeeping, keep geometry + opacity
+          for (let i = 0; i < tetraCount; i++) {
+            tetraActivationTime[i] = Infinity;
+            tetraConnectionCount[i] = 0;
+          }
+          for (let i = 0; i < lineCount; i++) {
+            lineStrength[i] = 0;
+            lineActivationTime[i] = Infinity;
+            lineIsFluctuation[i] = 0;
+            lineFlickerEnd[i] = 0;
+          }
+        }
+        // We handle transition ourselves; skip generic phase change below
+        return;
     }
 
-    if (elapsed > phase.duration) {
+    // Generic phase transition for all but fluctuating/dissolving
+    if (phase && phase.duration !== Infinity && elapsed > phase.duration) {
       systemPhase = phase.next;
       phaseStartTime = globalTime;
       if (systemPhase === 'forming') {
+        // Only used on very first pass; we never go back here from dissolving
         initSystem();
       }
     }
@@ -321,11 +352,27 @@
       const x2 = tetraX[lineT2[i]];
       const y2 = tetraY[lineT2[i]];
 
+      const isEntangled =
+        lineActivationTime[i] !== Infinity && lineIsFluctuation[i] === 0;
+
+      // True entanglement links: brighter, thicker, more "solid"
+      let alpha, widthScale, color;
+      if (isEntangled) {
+        alpha = 0.25 + s * 0.8;
+        widthScale = 1.4 + s * 2.4;
+        color = `rgba(246, 218, 160, ${alpha})`;
+      } else {
+        // Fluctuation links: thinner, subtler
+        alpha = 0.10 + s * 0.4;
+        widthScale = 0.8 + s * 1.0;
+        color = `rgba(201, 169, 98, ${alpha})`;
+      }
+
       ctx.beginPath();
       ctx.moveTo(x1, y1);
       ctx.lineTo(x2, y2);
-      ctx.strokeStyle = `rgba(201, 169, 98, ${s * 0.5})`;
-      ctx.lineWidth = 1 + s * 1.5;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = widthScale;
       ctx.stroke();
     }
 
