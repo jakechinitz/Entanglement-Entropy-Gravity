@@ -43,7 +43,7 @@
     pure: { duration: 2500, next: 'fluctuating' },
     fluctuating: { duration: Infinity, next: 'spreading' },
     spreading: { duration: 18000, next: 'saturated' },
-    saturated: { duration: 5000, next: 'dissolving' },
+    saturated: { duration: 10000, next: 'dissolving' },
     // dissolving will control its own transition based on link fadeout
     dissolving: { duration: Infinity, next: 'fluctuating' }
   };
