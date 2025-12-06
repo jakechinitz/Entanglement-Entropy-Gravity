@@ -14,7 +14,7 @@
             background-color: #050508; /* Matches the animation bg */
             overflow-x: hidden;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            color: #EAEAEA;
+            color: #ffffff;
         }
 
         /* The Canvas acts as the background */
