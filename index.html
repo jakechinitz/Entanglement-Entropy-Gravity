@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unified Entanglement-Entropy Gravity | Entropic Scalar EFT</title>
+    <title>Unified Entanglement Entropy Gravity | Entropic Scalar EFT</title>
 
     <meta name="description" content="An entanglement-entropy gravity framework where a single scalar field S_ent encodes vacuum entanglement deficits, derives Newton’s constant G from first principles, and links mass–information equivalence to galactic dynamics, black holes, and the lepton spectrum.">
 
@@ -45,34 +45,59 @@
     <div class="phase-display" id="phaseDisplay">PURE CONDENSATE</div>
 
     <!-- HERO / LANDING -->
-    <section id="landing">
-        <div id="canvas-container">
-            <canvas id="tetra-canvas"></canvas>
-        </div>
+<section id="hero">
+  <div class="hero-wrapper">
+    <h1 class="site-title">Entanglement, Information, and Gravity</h1>
+    <p class="site-subtitle">
+      A six-paper research program exploring whether mass, gravity, dark matter, and dark energy
+      can all be understood as consequences of how quantum information is arranged in space and time.
+    </p>
 
-        <div class="landing-content">
-            <h1 class="title">Unified Entanglement-Entropy Gravity</h1>
-            <p class="subtitle">An Entropic Scalar EFT in Six Papers</p>
+    <div class="hero-highlight">
+      <h3>Key Program Claim</h3>
+      <p>
+        This work proposes that a single information-theoretic quantity — the
+        <strong>entanglement deficit</strong> of the quantum vacuum — can simultaneously:
+      </p>
+      <ul class="compact-list">
+        <li>define what mass is, in units of information (bits),</li>
+        <li>generate gravity as an emergent, entropic effect,</li>
+        <li>explain galaxy rotation curves without dark matter particles,</li>
+        <li>account for cosmic acceleration without a mysterious dark-energy fluid, and</li>
+        <li>relate these large-scale phenomena to the observed masses of the electron, muon, and tau.</li>
+      </ul>
+      <p>
+        In other words: the same microscopic information structure that gives a particle its mass
+        also sets the strength of gravity and shapes the large-scale behavior of the universe.
+      </p>
+    </div>
 
-            <div class="abstract">
-                <p>
-                    We present an emergent/entropic gravity framework in which quantum entanglement entropy
-                    $S_{\\text{ent}}$ generates spacetime curvature and derives Newton’s constant $G$ from first
-                    principles. A single scalar field encodes vacuum entanglement deficits, linking
-                    mass–information equivalence to galactic dynamics (flat rotation curves, Baryonic
-                    Tully–Fisher). We fix $G$ de novo via a wedge-sharing constant $g_{\\text{share}} \\approx 7.4$
-                    motivated by group-field/tensor constructions and transport geometry, then validate units,
-                    normalizations, and the electron 1-bit anchor with analytic derivations and numerics.
-                </p>
-            </div>
-
-            <div class="key-result">
-                <strong>Key Program Claim:</strong>
-                Gravity is an entanglement-mediated response: once the mass–information constant $\\kappa_m$
-                and a single geometric sharing factor $g_{\\text{share}}$ are fixed, the framework predicts
-                Newton’s $G$, the MOND/RAR scale $a_0$, and the lepton curvature with no astrophysical
-                free parameters.
-            </div>
+    <div class="hero-abstract">
+      <h3>Abstract (Informal)</h3>
+      <p>
+        The central idea is simple to state: the vacuum of space is not “empty,” but a densely
+        connected web of quantum entanglement. Ordinary matter corresponds to tiny disruptions
+        in that web — places where some of the possible connections are missing. These
+        disruptions are measured by a scalar field, denoted <code>S<sub>ent</sub>(x)</code>,
+        which counts how much entanglement has been removed in a given region.
+      </p>
+      <p>
+        This program takes that idea seriously and pushes it as far as possible. It treats
+        <code>S<sub>ent</sub>(x)</code> as the basic ingredient of a new effective field theory
+        and asks: if we assume that mass is proportional to this entanglement deficit, and we
+        let the deficit spread and equilibrate in a mathematically consistent way, do we recover
+        anything like the real universe? The six papers linked on this site argue that the
+        answer is “yes” to a surprising extent.
+      </p>
+      <p>
+        The theory claims to derive Newton’s gravitational constant from information-theoretic
+        inputs, to reproduce key galaxy-scale regularities that are usually attributed to dark
+        matter, and to offer a new perspective on cosmic acceleration and the apparent
+        fine-tuning of the universe’s history — all from the behavior of a single scalar
+        “entanglement field.”
+      </p>
+    </div>
+  </div>
 
             <!-- Top paper links -->
             <div class="paper-links-inline">
@@ -110,164 +135,292 @@
     </section>
 
     <!-- MAIN EXPLANATION -->
-    <section id="content">
-        <div class="content-wrapper">
-            <h2 class="section-title">What is this theory about?</h2>
-            <p>
-                The core idea is that gravity is not a fundamental force but the macroscopic response
-                of an underlying entanglement medium. A single real scalar field $S_{\\text{ent}}(x)$ encodes
-                local deficits of vacuum entanglement. Gradients in this field behave like “entanglement
-                pressure,” sourcing curvature in much the same way that stress–energy sources curvature in
-                general relativity.
-            </p>
-            <p>
-                Mass is identified with information through a universal conversion constant
-                $\\kappa_m$ (kg/bit). In the simplest operational picture, a free electron carries exactly
-                one bit of vacuum-subtracted entanglement across a spatial cut. Once that 1-bit anchor is
-                fixed, the same $\\kappa_m$ determines how much curvature corresponds to a given entropy deficit.
-            </p>
+<section id="content">
+  <div class="content-wrapper">
+    
+    <h2 class="section-title">Part 1: Why We Need a New Perspective</h2>
+    <p>
+      Modern physics is built on two exceptionally successful theories that describe different
+      domains of reality:
+    </p>
+    <div class="highlight-box">
+      <h4>The Two Great Frameworks</h4>
+      <ul class="compact-list">
+        <li><strong>Quantum Mechanics:</strong> governs particles, fields, and probabilities at microscopic scales.</li>
+        <li><strong>General Relativity:</strong> describes gravity as the curvature of spacetime at large scales.</li>
+      </ul>
+    </div>
+    <p>
+      Each of these theories has passed every experimental test in its own regime. The problem
+      is that they do not seamlessly fit together. When we try to combine them in extreme
+      situations — near black holes, at the Big Bang, or at very small distances — the usual
+      mathematical tools produce infinities and contradictions.
+    </p>
+    <p>
+      At the same time, our best cosmological model depends heavily on two invisible
+      components:
+    </p>
+    <p>
+      <strong>Dark Matter:</strong> introduced to explain why galaxies rotate as if they contain far more mass than we can see.  
+      <br>
+      <strong>Dark Energy:</strong> invoked to explain why the expansion of the universe is accelerating rather than slowing down.
+    </p>
+    <p>
+      Together, these unseen entities are said to make up about 95% of the universe’s energy
+      content. Yet, after decades of experiments, we have no direct non-gravitational evidence
+      for what they actually are.
+    </p>
+    <p>
+      This research program starts from a different angle. Instead of adding more ingredients
+      (new particles, new mysterious fluids), it asks:
+    </p>
+    <p class="highlight-box">
+      <strong>What if gravity, dark matter, and dark energy are not separate substances at all,</strong><br>
+      but different manifestations of how information is stored and redistributed in the fabric
+      of quantum spacetime?
+    </p>
 
-            <div class="highlight-box">
-                <h4>Key Objects</h4>
-                <ul class="compact-list">
-                    <li><strong>$S_{\\text{ent}}(x)$:</strong> entanglement-deficit scalar field.</li>
-                    <li><strong>$\\kappa_m$:</strong> mass–information constant (kg/bit).</li>
-                    <li><strong>$g_{\\text{share}}$:</strong> wedge-sharing constant from transport geometry.</li>
-                    <li><strong>$a_0$:</strong> emergent acceleration scale in galaxy dynamics.</li>
-                    <li><strong>Spin-3 condensate:</strong> bosonic microstructure of the entanglement medium.</li>
-                </ul>
-            </div>
+    <h2 class="section-title">Part 2: Spacetime as an Entanglement Network</h2>
+    <p>
+      The key shift is conceptual. Rather than taking “spacetime” as a smooth stage on which
+      physics happens, we treat it as the large-scale appearance of something more microscopic:
+      an underlying network of quantum entanglement.
+    </p>
+    <p>
+      In this view, what we normally call the “vacuum” is not empty. It is the state where
+      this network is as richly interconnected as possible — a sort of maximally tangled
+      background of correlations between every region of space and every other.
+    </p>
+    <p>
+      <strong>Matter, in this picture, is not something placed into that vacuum.</strong> Instead,
+      matter is a pattern of <em>missing</em> connections: a local disruption of the network.
+      You can think of it as a tiny region where some of the usual entanglement links have been
+      removed or constrained. The theory calls this a <strong>topological defect</strong> in the
+      entanglement structure.
+    </p>
+    <h3>Mass as “Entanglement Deficit”</h3>
+    <p>
+      This leads to a simple but powerful redefinition: mass measures how much entanglement is
+      missing compared to the vacuum. The more you deform the entanglement network in a region,
+      the more “massive” that region appears.
+    </p>
+    <p>
+      To make this precise, we introduce a scalar field:
+    </p>
+    <div class="equation">
+      S<sub>ent</sub>(x) = “how much entanglement is missing here?”
+    </div>
+    <p>
+      and we define mass via a proportionality:
+    </p>
+    <div class="equation">
+      m = \kappa_m \times S_{\text{ent}}.
+    </div>
+    <p>
+      Here, <code>S<sub>ent</sub></code> is measured in units of information (bits), and
+      <code>m</code> is measured in kilograms. The constant <code>\kappa_m</code> converts
+      “missing entanglement” into ordinary inertial mass.
+    </p>
+    <p>
+      A central calibration in this program is:
+      <strong>the electron corresponds to exactly 1 bit of vacuum-subtracted entanglement.</strong>
+      That statement fixes the numerical value of <code>\kappa_m</code> once and for all.
+      From that point on, every mass in the theory, and every gravitational effect linked to
+      mass, must emerge from the same information-to-mass conversion factor.
+    </p>
 
-            <h2 class="section-title">What problems is it trying to solve?</h2>
-            <p>
-                The program targets several puzzles at once:
-            </p>
-            <div class="highlight-box">
-                <h4>Target Problems</h4>
-                <ul class="compact-list">
-                    <li>
-                        <strong>Why is $G$ what it is?</strong> In standard physics, Newton’s constant is an
-                        empirical input. Here, $G$ is derived from the combination of black-hole entropy,
-                        the entanglement-scalar EFT, and a single geometric constant $g_{\\text{share}}$.
-                    </li>
-                    <li>
-                        <strong>Galaxy rotation &amp; the RAR:</strong> Flat rotation curves and the
-                        radial acceleration relation are reproduced without particulate dark matter,
-                        via an entropic force sourced by $S_{\\text{ent}}$.
-                    </li>
-                    <li>
-                        <strong>Mass hierarchy &amp; leptons:</strong> The electron, muon, and tau masses
-                        follow a log-quadratic pattern whose curvature is fixed by the same
-                        $g_{\\text{share}}$, once the microscopic shell degeneracy is specified.
-                    </li>
-                    <li>
-                        <strong>Black-hole thermodynamics:</strong> The Bekenstein–Hawking area law
-                        appears as the macroscopic limit of the same entanglement deficit scalar,
-                        with horizons acting as maximal-deficit surfaces.
-                    </li>
-                </ul>
-            </div>
+    <h2 class="section-title">Part 3: How Gravity Emerges from Information</h2>
+    <p>
+      Once mass is reinterpreted as an entanglement deficit, gravity no longer needs to be
+      treated as a separate fundamental force. Instead, it appears as a collective response of
+      the entanglement network trying to smooth out those deficits.
+    </p>
+    <p>
+      Intuitively:
+    </p>
+    <p class="highlight-box">
+      <strong>Entanglement wants to “even out.”</strong><br>
+      If some region of space has less entanglement than its surroundings (because matter is
+      present), the network rearranges itself. That rearrangement shows up, at large scales,
+      as the bending of spacetime and the familiar pull of gravity.
+    </p>
+    <p>
+      Mathematically, this is encoded in an effective field theory where the scalar field
+      <code>S<sub>ent</sub>(x)</code> is allowed to vary in space and time, and its gradients
+      contribute to the stress–energy that curves spacetime. The resulting equations look very
+      similar to Einstein’s equations, but with an extra “entropic” contribution coming from
+      the information structure of the vacuum.
+    </p>
+    <h3>Deriving Newton’s Constant from Microscopic Inputs</h3>
+    <p>
+      In standard physics, Newton’s gravitational constant <code>G</code> is an experimentally
+      measured number. We insert it into our equations because it works, but we do not explain
+      where its value comes from.
+    </p>
+    <p>
+      In this framework, the goal is to compute <code>G</code> from more basic ingredients.
+      The derivation uses three pieces:
+    </p>
+    <ol>
+      <li>
+        A <strong>Planck-scale anchor</strong>: the maximum possible “tension” of the vacuum,
+        interpreted as an information density at the smallest meaningful scale.
+      </li>
+      <li>
+        A <strong>geometric sharing factor</strong>:
+        <span class="equation">g<sub>share</sub> \approx 7.43,</span>
+        which counts how many independent “channels” the vacuum uses to distribute
+        entanglement around a disturbance. In the more technical papers, this constant is
+        tied to the combinatorics of a particular spin-3 quantum medium and turns out to be
+        very close to <code>ln(1680)</code>, a pure number with no units.
+      </li>
+      <li>
+        The <strong>electron calibration</strong>: the requirement that a single electron
+        corresponds to exactly one bit of entanglement deficit at its natural length scale.
+      </li>
+    </ol>
+    <p>
+      When these ingredients are combined and followed through the equations, the theory
+      produces a value of <code>G</code> that matches the observed gravitational constant to
+      within current experimental precision — using only information-theoretic assumptions plus
+      known constants like the electron mass and the speed of light.
+    </p>
+    <p>
+      In short: <strong>gravity’s strength is not arbitrary here.</strong> It is set by how
+      efficiently the quantum vacuum can redistribute entanglement around a one-bit defect.
+    </p>
 
-            <h2 class="section-title">How does it roughly work?</h2>
-            <p>
-                Microscopically, the theory models spacetime as a condensate of spin-3 tetrahedral
-                quanta in a group-field or tensor-network–like framework. Each tetrahedron has four faces,
-                each face carrying one of seven spin-$3$ projections $m = -3,\\dots,+3$, with the constraint
-                that all four faces are in distinct states. This gives a precise state-count:
-            </p>
+    <h2 class="section-title">Part 4: Galaxies Without Dark Matter Particles</h2>
+    <p>
+      The same scalar field <code>S<sub>ent</sub></code> that defines mass also evolves over
+      large distances. In extended systems like galaxies, the entanglement deficit created by
+      all the stars and gas does not remain sharply localized. It spreads out and forms a
+      smooth, long-range gradient.
+    </p>
+    <p>
+      This gradient acts like an additional gravitational potential — not because there is
+      extra invisible mass, but because the vacuum’s entanglement structure is distorted on
+      large scales. The theory describes this as an <strong>entropic halo</strong>:
+      a region surrounding the visible galaxy where <code>S<sub>ent</sub></code> is elevated
+      above its vacuum value, even though there are no new particles present.
+    </p>
+    <p>
+      In the outer parts of galaxies, where the usual Newtonian acceleration from visible
+      matter is very small, this entropic contribution becomes dominant. The result is:
+    </p>
+    <ul>
+      <li>
+        Flat or gently rising rotation curves, matching what astronomers observe without
+        needing a dark matter halo made of unknown particles.
+      </li>
+      <li>
+        An analytic prediction of the <strong>Baryonic Tully–Fisher Relation</strong>, which
+        connects a galaxy’s visible mass to the fourth power of its rotation speed
+        (<code>v⁴ ∝ M</code>). In this framework, that scaling emerges naturally from how the
+        entanglement field responds to a given amount of baryonic (ordinary) mass.
+      </li>
+    </ul>
+    <p>
+      From this point of view, the “missing mass” problem is reframed. The discrepancy between
+      visible matter and observed gravity is not evidence of a hidden particle population, but
+      a sign that the vacuum’s information structure is participating in the dynamics in a way
+      that standard gravity equations do not yet account for.
+    </p>
 
-            <div class="equation">
-                1680 = 2 \\times P(7,4) = 2 \\times 7 \\times 6 \\times 5 \\times 4
-            </div>
+    <h2 class="section-title">Part 5: Time, Cosmic Acceleration, and the Role of the Vacuum</h2>
+    <p>
+      General Relativity already tells us that time does not flow at the same rate everywhere:
+      clocks tick more slowly in strong gravitational fields. This theory extends that idea to
+      the information domain.
+    </p>
+    <p>
+      The proposal is that the local rate of time is influenced by the local
+      <strong>entanglement density</strong> of the vacuum. Regions with more “pure” vacuum
+      (fewer defects, fewer constraints) are closer to maximal entanglement and experience
+      slightly faster proper time than regions where the vacuum is heavily disturbed.
+    </p>
+    <p>
+      Cosmic voids — enormous regions with very little matter — are then places where the
+      vacuum is closest to its maximally entangled state. In contrast, dense environments
+      (galaxies, clusters) have more entanglement deficits and slightly slower local time.
+    </p>
+    <p>
+      When light from distant supernovae and galaxies travels to us, much of its path goes
+      through these high-entanglement voids. If time in those regions runs just a bit faster,
+      the accumulated effect can mimic what we currently interpret as an accelerating cosmic
+      expansion.
+    </p>
+    <p class="highlight-box">
+      In this interpretation, at least part of “dark energy” is not a new substance with
+      negative pressure, but a subtle, large-scale time-dilation pattern created by the
+      entanglement structure of the vacuum itself.
+    </p>
 
-            <p>
-                The factor of 2 accounts for the two chiral orientations of the tetrahedron; $P(7,4)$
-                counts distinct assignments of four faces drawn from seven spin states without repetition.
-                The geometric wedge-sharing constant is then
-            </p>
+    <h2 class="section-title">Part 6: Many Pasts and the Selection of Histories</h2>
+    <p>
+      Finally, the program explores what happens when we apply information-theoretic thinking
+      not just to space and time, but to history itself.
+    </p>
+    <p>
+      Standard quantum mechanics treats the future as a set of possibilities and uses
+      probabilities to weigh them. The past, by contrast, is usually treated as fixed:
+      there was one precise history, and we are trying to discover it.
+    </p>
+    <p>
+      The <strong>Many-Pasts Hypothesis</strong> challenges that separation. It treats the
+      entire space–time history of the universe as a quantum object — a superposition of many
+      possible pasts and futures, all of which must be consistent with the present we observe.
+    </p>
+    <p>
+      In that picture:
+    </p>
+    <ul>
+      <li>
+        Histories that cannot lead to our current universe, when all constraints are applied,
+        interfere destructively and effectively drop out.
+      </li>
+      <li>
+        Among the remaining consistent histories, the ones that generate more entanglement
+        — more complex structure, more richly connected states — are given much higher weight.
+      </li>
+    </ul>
+    <p>
+      This provides a possible explanation for the apparent fine-tuning of the universe. We
+      observe a cosmos that is unusually good at forming galaxies, stars, chemistry, and life
+      because histories that failed to generate such complexity simply do not contribute much
+      to the present state. The universe looks “designed” for information growth not because of
+      an external designer, but because quantum dynamics strongly favors entanglement-rich
+      histories over entanglement-poor ones.
+    </p>
 
-            <div class="equation">
-                g_{\\text{share}} = \\ln(1680) \\approx 7.43.
-            </div>
+    <div class="highlight-box">
+      <h2 style="margin-top: 0;">Summary</h2>
+      <p>
+        The Entanglement–Entropy Gravity program develops a single, consistent story:
+      </p>
+      <ul class="compact-list">
+        <li><strong>Spacetime</strong> is the large-scale appearance of an underlying entanglement network.</li>
+        <li><strong>Mass</strong> is proportional to how much entanglement is missing (the entanglement deficit).</li>
+        <li><strong>Gravity</strong> is the vacuum’s entropic response to those deficits.</li>
+        <li><strong>Dark Matter effects</strong> arise from long-range gradients in the entanglement field, not unseen particles.</li>
+        <li><strong>Dark Energy–like behavior</strong> emerges from variations in the entanglement-controlled rate of time.</li>
+        <li><strong>Cosmic history</strong> is biased toward paths that maximize entanglement and information complexity.</li>
+      </ul>
+      <p>
+        The technical papers connected to this site attempt to show that this story is not just
+        philosophically appealing, but mathematically concrete: the same information-based
+        constants can be used to derive the strength of gravity, explain galaxy-scale
+        regularities, and connect to the observed mass pattern of fundamental particles.
+      </p>
+      <p>
+        Whether this framework is ultimately correct is an open question. The intention of this
+        work is to present a coherent, testable alternative: a universe where what we call
+        “matter” and “gravity” are different faces of a deeper quantity — the organization of
+        quantum information itself.
+      </p>
+    </div>
 
-            <p>
-                Coarse-graining this condensate yields an effective scalar field $S_{\\text{ent}}(x)$ and a
-                continuum mass–information coupling $\\kappa_m$. Running from the Planck scale (where black-hole
-                entropy sets the UV boundary condition) down to the electron scale (where the 1-bit anchor
-                fixes the IR) gives a tightly constrained $\\kappa_m$ with a total exponent $5/2$ coming from
-                area-law scaling (+2) plus three independent $+1/2$ channel-sharing contributions.
-            </p>
-
-            <div class="highlight-box">
-                <h4>RAR / MOND-like Interpolation</h4>
-                <p>
-                    On galactic scales, a two-horizon structure (local Rindler + cosmological) and a bosonic
-                    entropic response yield a specific radial-acceleration relation:
-                </p>
-                <div class="equation">
-                    g_{\\text{obs}} = \\frac{g_{\\text{bar}}}{1 - e^{-\\sqrt{g_{\\text{bar}}/a_0}}}, \\quad
-                    a_0 = \\frac{c H_0}{4\\pi^2} \\, g_{\\text{share}}.
-                </div>
-                <p>
-                    Once you assume (i) the two-horizon temperature, (ii) a single bosonic scale $a_0$,
-                    and (iii) linear entropic response to the Bose–Einstein occupation number, this shape
-                    is essentially forced: there is no remaining free interpolation parameter.
-                </p>
-            </div>
-
-            <h2 class="section-title">What’s different from standard gravity / QFT?</h2>
-            <p>
-                Conceptually, this framework treats geometry and mass as emergent data structures built out of
-                entanglement rather than as independent classical inputs. The Einstein tensor is replaced, at
-                the EFT level, by functional derivatives of an entanglement-scalar action. The stress–energy
-                of ordinary matter is reinterpreted as the back-reaction of changes in $S_{\\text{ent}}$.
-            </p>
-            <p>
-                On the QFT side, the theory emphasizes operational entanglement entropy across spatial cuts
-                rather than bare field amplitudes. In simple models (e.g., free Dirac fields), a single
-                localized excitation generates a universal jump of $\\ln 2$ in the reduced density matrix
-                eigenvalues—providing a clean, state-independent “one bit” reference. Interacting toy models
-                show that small mass shifts track small entanglement shifts, supporting the
-                mass–information identification in the weak-coupling regime.
-            </p>
-
-            <div class="highlight-box">
-                <h4>Spin-3 Condensate &amp; Leptons</h4>
-                <p>
-                    At the microscopic level, the medium is modeled as a spin-3 bosonic GFT field
-                    $\\varphi$ (tetrahedra), while charged leptons are spin-3/2 fermionic defects $\\psi$
-                    living in that medium. A local four-fermion interaction of NJL type can be rewritten
-                    via a Hubbard–Stratonovich transformation into a composite boson $\\Phi \\sim \\bar\\psi\\psi$
-                    which condenses. Entropy and phase-space arguments favor the spin-3 channel
-                    ($J = 3$, dimension $2J+1=7$) over lower-spin pairings, naturally reproducing the
-                    spin-3 structure assumed in the wedge-sharing constant.
-                </p>
-            </div>
-
-            <h2 class="section-title">Where might it be wrong or incomplete?</h2>
-            <p>
-                The current program is deliberately minimal: it focuses on $G$, galaxy phenomenology,
-                black-hole thermodynamics, and the lepton spectrum. Several important pieces remain
-                open or only sketched:
-            </p>
-            <ul class="compact-list">
-                <li>
-                    A fully Lorentzian, dynamical spacetime treatment (beyond the static and
-                    quasi-static regimes) is not yet complete.
-                </li>
-                <li>
-                    Neutrino masses, quark spectra, and full CKM/PMNS structure are not derived and
-                    are treated as future targets rather than predictions.
-                </li>
-                <li>
-                    Cosmological back-reaction, structure formation, and lensing are constrained
-                    qualitatively by the framework but still require detailed comparison to data.
-                </li>
-                <li>
-                    The microscopic identification $g_{\\text{share}} = \\ln(1680)$ is a strong,
-                    geometry-driven hypothesis, not yet a theorem of a fully specified GFT.
-                </li>
-            </ul>
+  </div>
 
             <div class="highlight-box">
                 <h4>The Six-Paper Program</h4>
