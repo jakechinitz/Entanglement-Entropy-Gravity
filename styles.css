@@ -566,6 +566,9 @@ footer a {
         align-items: flex-start;
         gap: 0.4rem;
     }
+}
+
+/* Home page (Layperson Overview) text: make it pure white */
 body:not(.paper-body) #content .content-wrapper p,
 body:not(.paper-body) #content .content-wrapper li {
     color: #ffffff;
@@ -574,7 +577,4 @@ body:not(.paper-body) #content .content-wrapper li {
 /* Equations in the overview: also brighter */
 body:not(.paper-body) #content .equation {
     color: #ffffff;
-}
-
-    
 }
