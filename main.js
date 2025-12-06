@@ -43,7 +43,7 @@
     pure: { duration: 2500, next: 'fluctuating' },
     fluctuating: { duration: Infinity, next: 'spreading' },
     spreading: { duration: 18000, next: 'saturated' },
-    saturated: { duration: 10000, next: 'dissolving' },
+    saturated: { duration: 5000, next: 'dissolving' },
     // dissolving will control its own transition based on link fadeout
     dissolving: { duration: Infinity, next: 'fluctuating' }
   };
@@ -172,12 +172,12 @@
 
       if (lineIsFluctuation[i] === 1) {
         // Visible strength, moderate rise
-        lineStrength[i] += (0.85 - lineStrength[i]) * 0.05;
+        lineStrength[i] += (0.85 - lineStrength[i]) * 0.04;
         tetraConnectionCount[lineT1[i]]++;
         tetraConnectionCount[lineT2[i]]++;
       } else if (lineActivationTime[i] === Infinity) {
         // Only fade if not part of spreading wave
-        lineStrength[i] *= 0.94;
+        lineStrength[i] *= 0.97;
       }
     }
 
@@ -206,32 +206,35 @@
     // Tetrahedra glow with connections
     for (let i = 0; i < tetraCount; i++) {
       const targetEnt = tetraConnectionCount[i] > 0 ? tetraConnectionCount[i] * 0.18 : 0;
-      tetraEntanglement[i] += (targetEnt - tetraEntanglement[i]) * 0.04;
+      tetraEntanglement[i] += (targetEnt - tetraEntanglement[i]) * 0.035;
     }
   }
 
   function startEntanglementWave() {
     const waveSpeed = 0.05;
 
-    // IMPORTANT: reset all line strengths before entanglement wave starts
-    // so they don't inherit bright fluctuation state and flash.
+    // Reset all line strengths before entanglement wave starts
     for (let i = 0; i < lineCount; i++) {
       lineStrength[i] = 0;
       lineIsFluctuation[i] = 0;
       lineFlickerEnd[i] = 0;
     }
 
+    // Slight jitter per tetra so the wave edges aren't perfectly sharp
     for (let i = 0; i < tetraCount; i++) {
       const dx = tetraX[i] - seedX;
       const dy = tetraY[i] - seedY;
       const dist = Math.sqrt(dx * dx + dy * dy);
-      tetraActivationTime[i] = globalTime + dist / waveSpeed;
+      const jitter = Math.random() * 400; // up to 0.4s of extra delay
+      tetraActivationTime[i] = globalTime + dist / waveSpeed + jitter;
     }
 
     for (let i = 0; i < lineCount; i++) {
       const t1Time = tetraActivationTime[lineT1[i]];
       const t2Time = tetraActivationTime[lineT2[i]];
-      lineActivationTime[i] = Math.max(t1Time, t2Time) + 80;
+      const base = Math.max(t1Time, t2Time);
+      const jitter = Math.random() * 500; // up to 0.5s stagger per link
+      lineActivationTime[i] = base + 80 + jitter;
     }
   }
 
@@ -271,19 +274,21 @@
         // Fade out any remaining fluctuation-only lines
         for (let i = 0; i < lineCount; i++) {
           if (lineActivationTime[i] === Infinity || globalTime < lineActivationTime[i]) {
-            lineStrength[i] *= 0.96;
+            lineStrength[i] *= 0.97;
           }
         }
 
-        // Wave propagation
+        // Wave propagation – slower, smoother easing
         for (let i = 0; i < tetraCount; i++) {
           if (globalTime > tetraActivationTime[i]) {
-            tetraEntanglement[i] += (1 - tetraEntanglement[i]) * 0.005;
+            const targetEnt = 1;
+            tetraEntanglement[i] += (targetEnt - tetraEntanglement[i]) * 0.004;
           }
         }
         for (let i = 0; i < lineCount; i++) {
           if (globalTime > lineActivationTime[i]) {
-            lineStrength[i] += (1 - lineStrength[i]) * 0.005;
+            const targetStrength = 0.9; // asymptote below 1 for smoother ease-in
+            lineStrength[i] += (targetStrength - lineStrength[i]) * 0.004;
           }
         }
         break;
@@ -370,7 +375,7 @@
         widthScale = 1.6 + s * 2.6;
         color = `rgba(246, 218, 160, ${alpha})`;
       } else {
-        // Fluctuation links: a bit brighter than before, but still softer
+        // Fluctuation links: a bit brighter, but still softer / thinner
         alpha = 0.16 + s * 0.5;
         widthScale = 1.0 + s * 1.3;
         color = `rgba(201, 169, 98, ${alpha})`;
