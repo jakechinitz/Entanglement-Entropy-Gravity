@@ -546,19 +546,3 @@
     });
   }
 })();
-
----
-
-After you paste this into `main.js`:
-
-1. Commit + push.
-2. Wait for GitHub Pages to rebuild (30–60s).
-3. Hard refresh the page (Cmd+Shift+R / Ctrl+Shift+R).
-
-You should see:
-
-- **No more full-network flash** when the entanglement wave kicks off.
-- **Fluctuation links** a bit brighter but still clearly “ghostly.”
-- **True entanglement links** crisp, bright, and distinct.
-
-If you want to nudge brightness or thickness further, we can now tweak just the `alpha` and `widthScale` values in the `render()` branch for `isEntangled` vs `!isEntangled`.
