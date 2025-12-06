@@ -14,6 +14,14 @@
 
     <link rel="stylesheet" href="styles.css">
 
+    <!-- Make the lower section beige instead of black -->
+    <style>
+      #content {
+        background-color: #f4efe4; /* beige */
+        color: #1e1811;
+      }
+    </style>
+
     <!-- MathJax v3 -->
     <script>
       window.MathJax = {
@@ -31,7 +39,7 @@
       "@context": "https://schema.org",
       "@type": "WebSite",
       "name": "Unified Entanglement-Entropy Gravity",
-      "url": "https://jakechinitz.github.io/Entanglement-Entropy-Gravity/",
+      "url": "https://chinitzjake.github.io/entanglement-gravity-site/",
       "description": "An entropic scalar EFT program where a single entanglement-entropy field S_ent(x) generates gravity, fixes Newton’s constant G, and constrains galactic dynamics and lepton masses.",
       "creator": {
         "@type": "Person",
@@ -55,7 +63,7 @@
 
         <div class="landing-content">
             <h1 class="title">Unified Entanglement-Entropy Gravity</h1>
-            <p class="subtitle">A Six-Paper Program in Entropic Scalar EFT</p>
+            <p class="subtitle">An Entropic Scalar EFT in Six Papers</p>
 
             <div class="abstract">
                 <p>
@@ -71,7 +79,7 @@
                     to smooth out those deficits. The six papers linked here explore how far this
                     picture can go: from defining a mass–information constant $\kappa_m$ and
                     deriving Newton’s constant $G$, to explaining galaxy rotation curves,
-                    dark-matter–like and dark-energy–like effects, and even regularities in the
+                    dark-matter–like and dark-energy–like effects, and regularities in the
                     lepton mass spectrum.
                 </p>
             </div>
@@ -82,10 +90,10 @@
                 (1) a universal mass–information constant $\kappa_m$ (using the electron as a
                 one-bit anchor) and (2) a single geometric sharing factor
                 $g_{\text{share}} \approx 7.4$ for how the vacuum redistributes that deficit,
-                the same constants can be used to:
-                derive Newton’s $G$ from microscopic inputs, predict the MOND/RAR scale $a_0$,
-                reproduce key galaxy scaling laws without dark matter particles, and match the
-                observed curvature of the electron–muon–tau mass pattern.
+                the same constants can be used to derive Newton’s $G$ from microscopic inputs,
+                predict the MOND/RAR scale $a_0$, reproduce key galaxy scaling laws without
+                dark matter particles, and match the observed curvature of the
+                electron–muon–tau mass pattern.
             </div>
 
             <!-- Top paper links -->
@@ -374,7 +382,7 @@
                 superposition of many possible pasts and futures, all of which must be
                 consistent with the present state we observe.
             </p>
-            <ul>
+            <ul class="compact-list">
                 <li>
                     <strong>Consistency Filter:</strong> Histories that cannot lead to the
                     observed present, once all physical constraints are enforced, interfere
@@ -395,27 +403,47 @@
             </p>
 
             <div class="highlight-box">
+                <h4>The Six-Paper Program</h4>
                 <h2 style="margin-top: 0;">Summary</h2>
                 <p>
-                    The entanglement–entropy gravity program assembles a single, coherent picture:
+                    The detailed arguments are distributed across six papers:
                 </p>
+                <ol class="compact-list">
+                    <li>
+                        <strong>Entanglement Entropy: Unifying the Quantum Origins of Gravity, Mass, Time, and Cosmic Structure</strong> –
+                        defines $S_{\text{ent}}(x)$, $\kappa_m$, and the broad emergent picture.
+                    </li>
+                    <li>
+                        <strong>Supplement: Group Field / Tensor Underpinnings of the Entropic Scalar EFT</strong> –
+                        builds the discrete microstructure and coarse-graining flow.
+                    </li>
+                    <li>
+                        <strong>Derivations and Numerical Validations for the Entropic Scalar EFT</strong> –
+                        pins down the action, units, and numerics for $\kappa_m$ and galactic scaling.
+                    </li>
+                    <li>
+                        <strong>Theoretical Foundations of the Wedge-Sharing Constant $g_{\text{share}}$</strong> –
+                        geometric derivation and random-walk persistence bounds.
+                    </li>
+                    <li>
+                        <strong>Entanglement–Scalar Derivation of $G$ (De Novo $G$)</strong> –
+                        shows how $G$ is fixed once $g_{\text{share}}$ is specified.
+                    </li>
+                    <li>
+                        <strong>Microstructure &amp; Phenomenological Supplement</strong> –
+                        RAR / $a_0$ derivation, lepton shell Hamiltonian, Hawking-like checks, and spin-3 condensate consistency.
+                    </li>
+                </ol>
                 <ul class="compact-list">
-                    <li><strong>Spacetime</strong> is the large-scale appearance of an underlying entanglement network.</li>
-                    <li><strong>Mass</strong> is proportional to an entanglement deficit: missing connections relative to the vacuum.</li>
-                    <li><strong>Gravity</strong> is the vacuum’s entropic response as it redistributes and smooths those deficits.</li>
-                    <li><strong>Dark-matter–like effects</strong> arise from long-range gradients in the entanglement field, not unseen particles.</li>
-                    <li><strong>Dark-energy–like behavior</strong> can emerge from entanglement-driven time dilation across cosmic voids.</li>
-                    <li><strong>Cosmic history</strong> is biased toward paths that maximize entanglement and information complexity.</li>
+                    <li><strong>Spacetime</strong> is the large-scale appearance of an entanglement network.</li>
+                    <li><strong>Mass</strong> is stored missing information.</li>
+                    <li><strong>Gravity</strong> is the tension of that information network.</li>
+                    <li><strong>Dark-matter–like effects</strong> are the “shadow” of that tension on galactic scales.</li>
+                    <li><strong>Dark-energy–like behavior</strong> is the time-distortion of the network across cosmic voids.</li>
+                    <li><strong>Cosmic history</strong> is biased toward maximal growth of entanglement and complexity.</li>
                 </ul>
                 <p>
-                    The six papers linked on this site work through the details: defining the
-                    scalar field $S_{\text{ent}}(x)$, fixing the mass–information constant
-                    $\kappa_m$ and the sharing factor $g_{\text{share}}$, deriving $G$,
-                    reproducing galaxy scaling relations, and connecting the same constants to the
-                    lepton mass spectrum. The aim is not to declare a final theory, but to offer a
-                    concrete, testable alternative in which matter, gravity, and the “dark sector”
-                    are different faces of a deeper quantity: the organization of quantum
-                    information itself.
+                    You can read each paper directly from this site via the “Papers” menu or the links above.
                 </p>
             </div>
 
@@ -436,53 +464,48 @@
                 <div class="paper-number">Paper I</div>
                 <div class="paper-title">Entanglement Entropy: Unifying the Quantum Origins of Gravity, Mass, Time, and Cosmic Structure</div>
                 <div class="paper-desc">
-                    Introduces $S_{\text{ent}}(x)$, the mass–information constant $\kappa_m$, and
-                    shows how entanglement deficits generate curvature across black holes,
-                    galaxies, and emergent temporal order.
+                    Defines $S_{\\text{ent}}(x)$, the mass–information constant $\\kappa_m$, and how
+                    entanglement deficits source curvature, linking black holes, galaxies, and temporal order.
                 </div>
             </div>
             <div class="paper-item" onclick="window.location.href='paper2.html'">
                 <div class="paper-number">Paper II</div>
                 <div class="paper-title">Supplement: Group Field / Tensor Underpinnings of the Entropic Scalar EFT</div>
                 <div class="paper-desc">
-                    Builds a spin-network / tensor-network microstructure whose coarse-graining
-                    yields the entanglement-scalar EFT and introduces the sharing factor
-                    $g_{\text{share}}$.
+                    Builds the spin-network / tensor-network microstructure whose coarse-graining yields the
+                    entanglement-scalar EFT and introduces the sharing factor $g_{\\text{share}}$.
                 </div>
             </div>
             <div class="paper-item" onclick="window.location.href='paper3.html'">
                 <div class="paper-number">Paper III</div>
                 <div class="paper-title">Derivations and Numerical Validations for the Entropic Scalar EFT</div>
                 <div class="paper-desc">
-                    Fixes the action, units, and normalizations; derives $\kappa_m$ from Planck to
-                    electron scales; and validates the framework with toy models and galactic
-                    scaling.
+                    Fixes the action, units, and normalizations; derives $\\kappa_m$ from Planck to electron
+                    scales and validates the framework with toy models and galactic scaling.
                 </div>
             </div>
             <div class="paper-item" onclick="window.location.href='paper4.html'">
                 <div class="paper-number">Paper IV</div>
-                <div class="paper-title">Theoretical Foundations of the Wedge-Sharing Constant $g_{\text{share}}$</div>
+                <div class="paper-title">Theoretical Foundations of the Wedge-Sharing Constant g_share</div>
                 <div class="paper-desc">
-                    Uses geometry and transport arguments to analyze how entanglement is shared
-                    across angular “wedges” and constrains $g_{\text{share}}$ to be of order 7.4.
+                    Geometric calculation of cone angles, persistence multipliers, and conservative bounds
+                    leading to $g_{\\text{share}} \\approx 7.4$ with a reproducible script.
                 </div>
             </div>
             <div class="paper-item" onclick="window.location.href='paper5.html'">
                 <div class="paper-number">Paper V</div>
-                <div class="paper-title">Entanglement–Scalar Derivation of $G$ (De Novo $G$)</div>
+                <div class="paper-title">Entanglement–Scalar Derivation of G (De Novo G)</div>
                 <div class="paper-desc">
-                    Shows how Newton’s constant is fixed from $\kappa_m$ and $g_{\text{share}}$
-                    alone, using the electron as the one-bit anchor and no gravitational data as
-                    input.
+                    Shows how Newton’s constant is fixed from $\\kappa_m$ and $g_{\\text{share}}$ alone, using
+                    the electron as the 1-bit anchor and no gravitational data as input.
                 </div>
             </div>
             <div class="paper-item" onclick="window.location.href='paper6.html'">
                 <div class="paper-number">Paper VI</div>
                 <div class="paper-title">Microstructure &amp; Phenomenological Supplement</div>
                 <div class="paper-desc">
-                    Derives the RAR / $a_0$ relation, connects lepton mass curvature to a factor
-                    $(5/3)g_{\text{share}}$, and cross-checks $g_{\text{share}}$ with spin-3
-                    condensate and Hawking-like wedge-sharing arguments.
+                    Derives the RAR / $a_0$ interpolation, ties lepton curvature to $(5/3)g_{\\text{share}}$,
+                    and cross-checks $g_{\\text{share}}$ with Hawking-like wedge sharing and a spin-3 condensate.
                 </div>
             </div>
         </div>
