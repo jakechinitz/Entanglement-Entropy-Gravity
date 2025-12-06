@@ -1,25 +1,28 @@
 // Animation + UI logic
-
-(function() {
+(function () {
   const canvas = document.getElementById('tetra-canvas');
   const phaseDisplay = document.getElementById('phaseDisplay');
   const toggleBtn = document.getElementById('toggleAnim');
 
-  let ctx;
+  let ctx = null;
   let animationRunning = true;
-  let width = 0, height = 0;
+  let width = 0;
+  let height = 0;
 
   const SPACING = 38;
   const TETRA_SIZE = 12;
   const SQRT3_2 = Math.sqrt(3) / 2;
   const TETRA_H = TETRA_SIZE * SQRT3_2;
+
   const CRITICAL_CONNECTIONS = 3;
 
+  // Tetrahedra data
   let tetraCount = 0;
   let tetraX, tetraY, tetraRotation, tetraOpacity, tetraEntanglement;
   let tetraActivationTime, tetraConnectionCount;
   let tetraFaceStates;
 
+  // Lines data
   let lineCount = 0;
   let lineT1, lineT2, lineStrength, lineActivationTime;
   let lineIsFluctuation;
@@ -27,6 +30,7 @@
 
   let tetraNeighborLines;
 
+  // System state
   let systemPhase = 'forming';
   let phaseStartTime = 0;
   let globalTime = 0;
@@ -35,37 +39,37 @@
   let nucleationTriggered = false;
 
   const phases = {
-    forming:     { duration: 3000,  next: 'pure' },
-    pure:        { duration: 2000,  next: 'fluctuating' },
+    forming: { duration: 4000, next: 'pure' },
+    pure: { duration: 2500, next: 'fluctuating' },
     fluctuating: { duration: Infinity, next: 'spreading' },
-    spreading:   { duration: 18000, next: 'saturated' },
-    saturated:   { duration: 5000,  next: 'dissolving' },
-    dissolving:  { duration: 3000,  next: 'forming' }
+    spreading: { duration: 18000, next: 'saturated' },
+    saturated: { duration: 5000, next: 'dissolving' },
+    // dissolving will control its own transition based on link fadeout
+    dissolving: { duration: Infinity, next: 'fluctuating' }
   };
 
-  function setPhaseLabel() {
-    if (!phaseDisplay) return;
-    const labels = {
-      forming: 'CONDENSATE FORMING',
-      pure: 'PURE CONDENSATE',
-      fluctuating: 'QUANTUM FLUCTUATIONS',
-      spreading: 'ENTANGLEMENT SPREADING',
-      saturated: 'SATURATED NETWORK',
-      dissolving: 'CONDENSATE DISSOLVING'
-    };
-    phaseDisplay.textContent = labels[systemPhase] || systemPhase.toUpperCase();
-  }
+  const triVerts = [
+    { x: 0, y: -TETRA_H * 0.6 },
+    { x: -TETRA_SIZE / 2, y: TETRA_H * 0.4 },
+    { x: TETRA_SIZE / 2, y: TETRA_H * 0.4 }
+  ];
+
+  const faceCenters = [
+    { x: 0, y: -TETRA_H * 0.25 },
+    { x: -TETRA_SIZE * 0.22, y: TETRA_H * 0.15 },
+    { x: TETRA_SIZE * 0.22, y: TETRA_H * 0.15 },
+    { x: 0, y: TETRA_H * 0.05 }
+  ];
 
   function resizeCanvas() {
     if (!canvas || !ctx) return;
-    width  = canvas.width  = window.innerWidth;
+    width = canvas.width = window.innerWidth;
     height = canvas.height = window.innerHeight;
     initSystem();
   }
 
   function initSystem() {
-    if (!canvas || !ctx) return;
-
+    // Extra padding to fill the screen completely
     const cols = Math.ceil(width / SPACING) + 4;
     const rows = Math.ceil(height / (SPACING * 0.866)) + 4;
     const offsetX = (width - (cols - 1) * SPACING) / 2;
@@ -92,250 +96,355 @@
         tetraRotation[idx] = Math.random() * Math.PI * 2;
         tetraOpacity[idx] = 0;
         tetraEntanglement[idx] = 0;
-        tetraActivationTime[idx] = 0;
+        tetraActivationTime[idx] = Infinity;
         tetraConnectionCount[idx] = 0;
+        tetraNeighborLines.push([]);
 
         for (let f = 0; f < 4; f++) {
-          tetraFaceStates[idx * 4 + f] = Math.random();
+          tetraFaceStates[idx * 4 + f] = 0.3 + Math.random() * 0.7;
         }
-
         idx++;
       }
     }
 
-    const maxLines = tetraCount * 6;
-    lineT1 = new Uint32Array(maxLines);
-    lineT2 = new Uint32Array(maxLines);
-    lineStrength = new Float32Array(maxLines);
-    lineActivationTime = new Float32Array(maxLines);
-    lineIsFluctuation = new Uint8Array(maxLines);
-    lineFlickerEnd = new Float32Array(maxLines);
-    lineCount = 0;
-
+    const lines = [];
     for (let i = 0; i < tetraCount; i++) {
-      tetraNeighborLines[i] = [];
+      for (let j = i + 1; j < tetraCount; j++) {
+        const dx = tetraX[i] - tetraX[j];
+        const dy = tetraY[i] - tetraY[j];
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < SPACING * 1.2) {
+          lines.push([i, j]);
+        }
+      }
+    }
+
+    lineCount = lines.length;
+    lineT1 = new Uint16Array(lineCount);
+    lineT2 = new Uint16Array(lineCount);
+    lineStrength = new Float32Array(lineCount);
+    lineActivationTime = new Float32Array(lineCount);
+    lineIsFluctuation = new Uint8Array(lineCount);
+    lineFlickerEnd = new Float32Array(lineCount);
+
+    for (let i = 0; i < lineCount; i++) {
+      lineT1[i] = lines[i][0];
+      lineT2[i] = lines[i][1];
+      lineStrength[i] = 0;
+      lineActivationTime[i] = Infinity;
+      lineIsFluctuation[i] = 0;
+      lineFlickerEnd[i] = 0;
+
+      tetraNeighborLines[lines[i][0]].push(i);
+      tetraNeighborLines[lines[i][1]].push(i);
     }
 
     systemPhase = 'forming';
-    phaseStartTime = performance.now();
+    phaseStartTime = globalTime;
     nucleationTriggered = false;
-    setPhaseLabel();
+    fluctuationEndTime = 0;
   }
 
-  function addConnection(t1, t2, strength, isFluctuation) {
-    if (lineCount >= lineT1.length) return;
-    const idx = lineCount++;
-    lineT1[idx] = t1;
-    lineT2[idx] = t2;
-    lineStrength[idx] = strength;
-    lineActivationTime[idx] = globalTime;
-    lineIsFluctuation[idx] = isFluctuation ? 1 : 0;
-    lineFlickerEnd[idx] = isFluctuation ? globalTime + 400 + Math.random() * 400 : 0;
+  function updateFluctuation() {
+    // Slightly brighter, but still distinct from true entanglement
+    const flickerChance = 0.0018;
+    const flickerDuration = 1200 + Math.random() * 1500; // 1.2–2.7 s
 
-    tetraNeighborLines[t1].push(idx);
-    tetraNeighborLines[t2].push(idx);
+    for (let i = 0; i < tetraCount; i++) {
+      tetraConnectionCount[i] = 0;
+    }
 
-    tetraConnectionCount[t1] = Math.min(255, tetraConnectionCount[t1] + 1);
-    tetraConnectionCount[t2] = Math.min(255, tetraConnectionCount[t2] + 1);
+    for (let i = 0; i < lineCount; i++) {
+      // Start new flickers
+      if (
+        lineIsFluctuation[i] === 0 &&
+        lineStrength[i] < 0.01 &&
+        Math.random() < flickerChance
+      ) {
+        lineIsFluctuation[i] = 1;
+        lineFlickerEnd[i] = globalTime + flickerDuration;
+      }
+
+      // End flickers
+      if (lineIsFluctuation[i] === 1 && globalTime > lineFlickerEnd[i]) {
+        lineIsFluctuation[i] = 0;
+      }
+
+      if (lineIsFluctuation[i] === 1) {
+        // Visible strength, moderate rise
+        lineStrength[i] += (0.85 - lineStrength[i]) * 0.04;
+        tetraConnectionCount[lineT1[i]]++;
+        tetraConnectionCount[lineT2[i]]++;
+      } else if (lineActivationTime[i] === Infinity) {
+        // Only fade if not part of spreading wave
+        lineStrength[i] *= 0.97;
+      }
+    }
+
+    // Check for critical mass
+    if (!nucleationTriggered && globalTime > fluctuationEndTime) {
+      for (let i = 0; i < tetraCount; i++) {
+        if (tetraConnectionCount[i] >= CRITICAL_CONNECTIONS) {
+          nucleationTriggered = true;
+          seedIdx = i;
+          seedX = tetraX[i];
+          seedY = tetraY[i];
+
+          // Clear fluctuation flags (spreading will take over)
+          for (let j = 0; j < lineCount; j++) {
+            lineIsFluctuation[j] = 0;
+          }
+
+          systemPhase = 'spreading';
+          phaseStartTime = globalTime;
+          startEntanglementWave();
+          return;
+        }
+      }
+    }
+
+    // Tetrahedra glow with connections
+    for (let i = 0; i < tetraCount; i++) {
+      const targetEnt = tetraConnectionCount[i] > 0 ? tetraConnectionCount[i] * 0.18 : 0;
+      tetraEntanglement[i] += (targetEnt - tetraEntanglement[i]) * 0.035;
+    }
+  }
+
+  function startEntanglementWave() {
+    const waveSpeed = 0.05;
+
+    // Reset all line strengths before entanglement wave starts
+    for (let i = 0; i < lineCount; i++) {
+      lineStrength[i] = 0;
+      lineIsFluctuation[i] = 0;
+      lineFlickerEnd[i] = 0;
+    }
+
+    // Slight jitter per tetra so the wave edges aren't perfectly sharp
+    for (let i = 0; i < tetraCount; i++) {
+      const dx = tetraX[i] - seedX;
+      const dy = tetraY[i] - seedY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const jitter = Math.random() * 400; // up to 0.4s of extra delay
+      tetraActivationTime[i] = globalTime + dist / waveSpeed + jitter;
+    }
+
+    for (let i = 0; i < lineCount; i++) {
+      const t1Time = tetraActivationTime[lineT1[i]];
+      const t2Time = tetraActivationTime[lineT2[i]];
+      const base = Math.max(t1Time, t2Time);
+      const jitter = Math.random() * 500; // up to 0.5s stagger per link
+      lineActivationTime[i] = base + 80 + jitter;
+    }
   }
 
   function updatePhase() {
     const elapsed = globalTime - phaseStartTime;
-    const info = phases[systemPhase];
+    const phase = phases[systemPhase];
 
-    if (info && info.duration !== Infinity && elapsed > info.duration) {
-      systemPhase = info.next;
+    switch (systemPhase) {
+      case 'forming':
+        if (phaseDisplay) phaseDisplay.textContent = 'FORMING CONDENSATE';
+        for (let i = 0; i < tetraCount; i++) {
+          if (elapsed > i * 1.8) {
+            tetraOpacity[i] += (1 - tetraOpacity[i]) * 0.02;
+          }
+        }
+        break;
+
+      case 'pure':
+        if (phaseDisplay) phaseDisplay.textContent = 'PURE CONDENSATE';
+        for (let i = 0; i < tetraCount; i++) {
+          tetraOpacity[i] += (1 - tetraOpacity[i]) * 0.02;
+        }
+        break;
+
+      case 'fluctuating':
+        if (phaseDisplay) phaseDisplay.textContent = 'QUANTUM FLUCTUATIONS';
+        if (fluctuationEndTime === 0) {
+          fluctuationEndTime = globalTime + 5000 + Math.random() * 5000; // 5–10 s
+        }
+        updateFluctuation();
+        // Fluctuating phase controls its own transition via nucleation
+        return;
+
+      case 'spreading':
+        if (phaseDisplay) phaseDisplay.textContent = 'ENTANGLEMENT SPREADING';
+
+        // Fade out any remaining fluctuation-only lines
+        for (let i = 0; i < lineCount; i++) {
+          if (lineActivationTime[i] === Infinity || globalTime < lineActivationTime[i]) {
+            lineStrength[i] *= 0.97;
+          }
+        }
+
+        // Wave propagation – slower, smoother easing
+        for (let i = 0; i < tetraCount; i++) {
+          if (globalTime > tetraActivationTime[i]) {
+            const targetEnt = 1;
+            tetraEntanglement[i] += (targetEnt - tetraEntanglement[i]) * 0.004;
+          }
+        }
+        for (let i = 0; i < lineCount; i++) {
+          if (globalTime > lineActivationTime[i]) {
+            const targetStrength = 0.9; // asymptote below 1 for smoother ease-in
+            lineStrength[i] += (targetStrength - lineStrength[i]) * 0.004;
+          }
+        }
+        break;
+
+      case 'saturated':
+        if (phaseDisplay) phaseDisplay.textContent = 'SATURATED STATE';
+        // Let everything sit at near-maximum
+        break;
+
+      case 'dissolving':
+        if (phaseDisplay) phaseDisplay.textContent = 'DISSOLVING';
+        // Fade all entanglement links together; keep the condensate visible
+        let maxLine = 0;
+        for (let i = 0; i < lineCount; i++) {
+          // Strong uniform decay
+          lineStrength[i] *= 0.90;
+          if (lineStrength[i] > maxLine) maxLine = lineStrength[i];
+        }
+
+        // Let entanglement relax slightly but not vanish
+        for (let i = 0; i < tetraCount; i++) {
+          tetraEntanglement[i] *= 0.98;
+        }
+
+        // When links are essentially gone, restart quantum fluctuations (no full reset)
+        if (maxLine < 0.03 && elapsed > 1500) {
+          systemPhase = 'fluctuating';
+          phaseStartTime = globalTime;
+          nucleationTriggered = false;
+          fluctuationEndTime = 0;
+
+          // Clear entanglement-wave bookkeeping, keep geometry + opacity
+          for (let i = 0; i < tetraCount; i++) {
+            tetraActivationTime[i] = Infinity;
+            tetraConnectionCount[i] = 0;
+          }
+          for (let i = 0; i < lineCount; i++) {
+            lineStrength[i] = 0;
+            lineActivationTime[i] = Infinity;
+            lineIsFluctuation[i] = 0;
+            lineFlickerEnd[i] = 0;
+          }
+        }
+        // We handle transition ourselves; skip generic phase change below
+        return;
+    }
+
+    // Generic phase transition for all but fluctuating/dissolving
+    if (phase && phase.duration !== Infinity && elapsed > phase.duration) {
+      systemPhase = phase.next;
       phaseStartTime = globalTime;
       if (systemPhase === 'forming') {
+        // Only used on very first pass; we never go back here from dissolving
         initSystem();
       }
-      setPhaseLabel();
     }
-
-    if (systemPhase === 'fluctuating' && !nucleationTriggered) {
-      nucleationTriggered = true;
-      fluctuationEndTime = globalTime + 3500;
-      const attempts = 40;
-      let bestIdx = 0;
-      let maxCount = -1;
-      for (let i = 0; i < attempts; i++) {
-        const idx = (Math.random() * tetraCount) | 0;
-        if (tetraConnectionCount[idx] > maxCount) {
-          maxCount = tetraConnectionCount[idx];
-          bestIdx = idx;
-        }
-      }
-      seedIdx = bestIdx;
-      seedX = tetraX[seedIdx];
-      seedY = tetraY[seedIdx];
-    }
-
-    if (systemPhase === 'fluctuating' && globalTime > fluctuationEndTime) {
-      systemPhase = 'spreading';
-      phaseStartTime = globalTime;
-      setPhaseLabel();
-    }
-  }
-
-  function updateSystem() {
-    if (!canvas || !ctx) return;
-
-    const dt = 16;
-
-    for (let i = 0; i < tetraCount; i++) {
-      const conn = tetraConnectionCount[i];
-      const target = Math.min(1, conn / CRITICAL_CONNECTIONS);
-      tetraOpacity[i] += (target - tetraOpacity[i]) * 0.02;
-      tetraEntanglement[i] += (target - tetraEntanglement[i]) * 0.02;
-    }
-
-    if (systemPhase === 'pure') {
-      for (let i = 0; i < tetraCount; i++) {
-        if (Math.random() < 0.0015) {
-          const neighbors = tetraNeighborLines[i];
-          if (neighbors.length < 4) {
-            const j = (Math.random() * tetraCount) | 0;
-            addConnection(i, j, 0.3 + Math.random() * 0.3, false);
-          }
-        }
-      }
-    }
-
-    if (systemPhase === 'fluctuating') {
-      if (Math.random() < 0.015) {
-        const t1 = (Math.random() * tetraCount) | 0;
-        const t2 = (Math.random() * tetraCount) | 0;
-        addConnection(t1, t2, 0.35 + Math.random() * 0.4, true);
-      }
-    }
-
-    if (systemPhase === 'spreading') {
-      const elapsed = globalTime - phaseStartTime;
-      const radius = elapsed * 0.07;
-      const r2 = radius * radius;
-
-      for (let i = 0; i < tetraCount; i++) {
-        const dx = tetraX[i] - seedX;
-        const dy = tetraY[i] - seedY;
-        if (dx * dx + dy * dy < r2) {
-          tetraEntanglement[i] = Math.min(1, tetraEntanglement[i] + 0.03);
-          tetraOpacity[i] = Math.max(tetraOpacity[i], tetraEntanglement[i] * 0.9);
-          if (Math.random() < 0.02 && tetraNeighborLines[i].length < 5) {
-            const j = (Math.random() * tetraCount) | 0;
-            addConnection(i, j, 0.4 + Math.random() * 0.3, false);
-          }
-        }
-      }
-    }
-
-    if (systemPhase === 'dissolving') {
-      for (let i = 0; i < tetraCount; i++) {
-        tetraOpacity[i] *= 0.96;
-        tetraEntanglement[i] *= 0.96;
-      }
-    }
-  }
-
-  function drawTetra(x, y, rotation, opacity, entanglement, faceStates) {
-    const baseColor = [45, 74, 62];
-
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.rotate(rotation);
-
-    const e = entanglement;
-    const glow = 0.15 + e * 0.45;
-
-    ctx.beginPath();
-    ctx.moveTo(0, -TETRA_H);
-    ctx.lineTo(-TETRA_SIZE / 2, 0);
-    ctx.lineTo(TETRA_SIZE / 2, 0);
-    ctx.closePath();
-
-    ctx.fillStyle = `rgba(${baseColor[0]}, ${baseColor[1]}, ${baseColor[2]}, ${0.45 + opacity * 0.4})`;
-    ctx.fill();
-
-    ctx.beginPath();
-    ctx.moveTo(0, -TETRA_H);
-    ctx.lineTo(TETRA_SIZE / 2, 0);
-    ctx.lineTo(0, TETRA_H * 0.6);
-    ctx.closePath();
-    ctx.fillStyle = `rgba(${baseColor[0] + 20}, ${baseColor[1] + 20}, ${baseColor[2] + 10}, ${0.35 + opacity * 0.4})`;
-    ctx.fill();
-
-    ctx.beginPath();
-    ctx.moveTo(0, -TETRA_H);
-    ctx.lineTo(-TETRA_SIZE / 2, 0);
-    ctx.lineTo(0, TETRA_H * 0.6);
-    ctx.closePath();
-    ctx.fillStyle = `rgba(${baseColor[0] - 10}, ${baseColor[1] - 5}, ${baseColor[2]}, ${0.32 + opacity * 0.4})`;
-    ctx.fill();
-
-    ctx.beginPath();
-    ctx.moveTo(-TETRA_SIZE / 2, 0);
-    ctx.lineTo(TETRA_SIZE / 2, 0);
-    ctx.lineTo(0, TETRA_H * 0.6);
-    ctx.closePath();
-    ctx.fillStyle = `rgba(${baseColor[0]}, ${baseColor[1]} , ${baseColor[2] + 10}, ${0.28 + opacity * 0.35})`;
-    ctx.fill();
-
-    if (e > 0.1) {
-      const gAlpha = glow * 0.7;
-      const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, TETRA_SIZE * 1.9);
-      gradient.addColorStop(0, `rgba(255, 220, 160, ${gAlpha})`);
-      gradient.addColorStop(1, `rgba(0,0,0,0)`);
-      ctx.fillStyle = gradient;
-      ctx.beginPath();
-      ctx.arc(0, 0, TETRA_SIZE * 1.9, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    ctx.restore();
   }
 
   function render() {
-    if (!canvas || !ctx) return;
+    if (!ctx) return;
 
+    // Solid background
     ctx.fillStyle = '#050508';
     ctx.fillRect(0, 0, width, height);
 
-    updateSystem();
-
-    ctx.lineWidth = 1.0;
+    // Draw lines
+    ctx.lineCap = 'round';
     for (let i = 0; i < lineCount; i++) {
-      const t1 = lineT1[i];
-      const t2 = lineT2[i];
-      const x1 = tetraX[t1];
-      const y1 = tetraY[t1];
-      const x2 = tetraX[t2];
-      const y2 = tetraY[t2];
       const s = lineStrength[i];
+      if (s < 0.02) continue;
 
-      let alpha = 0.15 + s * 0.6;
-      if (lineIsFluctuation[i]) {
-        const remaining = Math.max(0, lineFlickerEnd[i] - globalTime);
-        alpha *= Math.min(1, remaining / 400);
+      const x1 = tetraX[lineT1[i]];
+      const y1 = tetraY[lineT1[i]];
+      const x2 = tetraX[lineT2[i]];
+      const y2 = tetraY[lineT2[i]];
+
+      const isEntangled =
+        lineActivationTime[i] !== Infinity && lineIsFluctuation[i] === 0;
+
+      // True entanglement links: brighter, thicker, more "solid"
+      let alpha, widthScale, color;
+      if (isEntangled) {
+        alpha = 0.3 + s * 0.9;
+        widthScale = 1.6 + s * 2.6;
+        color = `rgba(246, 218, 160, ${alpha})`;
+      } else {
+        // Fluctuation links: a bit brighter, but still softer / thinner
+        alpha = 0.16 + s * 0.5;
+        widthScale = 1.0 + s * 1.3;
+        color = `rgba(201, 169, 98, ${alpha})`;
       }
 
       ctx.beginPath();
       ctx.moveTo(x1, y1);
       ctx.lineTo(x2, y2);
-      ctx.strokeStyle = `rgba(201, 169, 98, ${alpha})`;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = widthScale;
       ctx.stroke();
     }
 
+    // Draw tetrahedra
     for (let i = 0; i < tetraCount; i++) {
-      if (tetraOpacity[i] <= 0.02) continue;
-      drawTetra(
-        tetraX[i],
-        tetraY[i],
-        tetraRotation[i],
-        tetraOpacity[i],
-        tetraEntanglement[i],
-        null
-      );
+      const op = tetraOpacity[i];
+      if (op < 0.02) continue;
+
+      const x = tetraX[i];
+      const y = tetraY[i];
+      const rot = tetraRotation[i];
+      const ent = tetraEntanglement[i];
+
+      tetraRotation[i] += 0.0015 + ent * 0.0015;
+
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(rot);
+
+      ctx.beginPath();
+      ctx.moveTo(triVerts[0].x, triVerts[0].y);
+      ctx.lineTo(triVerts[1].x, triVerts[1].y);
+      ctx.lineTo(triVerts[2].x, triVerts[2].y);
+      ctx.closePath();
+
+      const r = 20 + ent * 54;
+      const g = 45 + ent * 79;
+      const b = 35 + ent * 54;
+      const alpha = op * (0.4 + ent * 0.5);
+
+      ctx.fillStyle = `rgba(${r | 0}, ${g | 0}, ${b | 0}, ${alpha})`;
+      ctx.fill();
+
+      ctx.strokeStyle = `rgba(201, 169, 98, ${op * (0.25 + ent * 0.5)})`;
+      ctx.lineWidth = 0.5 + ent * 1.2;
+      ctx.stroke();
+
+      // Face indicators
+      const faceBaseAlpha = op * (0.5 + ent * 0.5);
+      const faceSize = 2 + ent * 2;
+      for (let f = 0; f < 4; f++) {
+        const fc = faceCenters[f];
+        const brightness = tetraFaceStates[i * 4 + f];
+
+        ctx.beginPath();
+        ctx.arc(fc.x, fc.y, faceSize + 1.5, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(201, 169, 98, ${faceBaseAlpha * brightness * 0.3})`;
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(fc.x, fc.y, faceSize, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 230, 190, ${faceBaseAlpha * brightness})`;
+        ctx.fill();
+      }
+
+      ctx.restore();
     }
 
+    // Nucleation highlight during spreading
     if (systemPhase === 'spreading' && seedX !== undefined) {
       const elapsed = globalTime - phaseStartTime;
       const radius = elapsed * 0.05;
@@ -349,12 +458,19 @@
         ctx.stroke();
 
         ctx.beginPath();
-        ctx.arc(seedX, seedY, 6 + Math.sin(elapsed * 0.008) * 2, 0, Math.PI * 2);
+        ctx.arc(
+          seedX,
+          seedY,
+          6 + Math.sin(elapsed * 0.008) * 2,
+          0,
+          Math.PI * 2
+        );
         ctx.fillStyle = `rgba(255, 220, 150, ${alpha})`;
         ctx.fill();
       }
     }
 
+    // Subtle highlight for near-critical tetrahedra in fluctuation phase
     if (systemPhase === 'fluctuating') {
       for (let i = 0; i < tetraCount; i++) {
         const count = tetraConnectionCount[i];
@@ -378,46 +494,26 @@
     requestAnimationFrame(animate);
   }
 
-  // Initialize animation only if canvas exists (home page)
-  if (canvas) {
+  // Init animation only if canvas exists
+  if (canvas && canvas.getContext) {
     ctx = canvas.getContext('2d');
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
     requestAnimationFrame(animate);
+
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', function () {
+        animationRunning = !animationRunning;
+        this.textContent = animationRunning ? 'Animation: ON' : 'Animation: OFF';
+        if (!animationRunning && ctx) {
+          ctx.fillStyle = '#050508';
+          ctx.fillRect(0, 0, width, height);
+        }
+      });
+    }
   }
 
-  // Toggle animation button
-  if (toggleBtn && canvas && ctx) {
-    toggleBtn.addEventListener('click', function() {
-      animationRunning = !animationRunning;
-      this.textContent = animationRunning ? 'Animation: ON' : 'Animation: OFF';
-      if (!animationRunning) {
-        ctx.fillStyle = '#050508';
-        ctx.fillRect(0, 0, width, height);
-      }
-    });
-  }
-
-  // Scroll fade for controls
-  if (typeof window !== 'undefined') {
-    window.addEventListener('scroll', () => {
-      const landing = document.getElementById('landing');
-      if (!landing) return;
-
-      const landingHeight = landing.offsetHeight;
-      const hidden = window.scrollY > landingHeight - 100;
-
-      if (toggleBtn) {
-        toggleBtn.style.opacity = hidden ? '0' : '1';
-        toggleBtn.style.pointerEvents = hidden ? 'none' : 'auto';
-      }
-      if (phaseDisplay) {
-        phaseDisplay.style.opacity = hidden ? '0' : '0.6';
-      }
-    });
-  }
-
-  // Sidebar behavior
+  // Sidebar behavior (works on all pages)
   const sidebar = document.getElementById('sidebar');
   const overlay = document.getElementById('overlay');
   const sidebarToggle = document.getElementById('sidebarToggle');
@@ -437,6 +533,21 @@
     overlay.addEventListener('click', () => {
       sidebar.classList.remove('open');
       overlay.classList.remove('active');
+    });
+  }
+
+  // Scroll fade for controls on landing section
+  if (typeof window !== 'undefined') {
+    window.addEventListener('scroll', () => {
+      const landing = document.getElementById('landing');
+      if (!landing || !toggleBtn || !phaseDisplay) return;
+
+      const landingHeight = landing.offsetHeight;
+      const hidden = window.scrollY > landingHeight - 100;
+
+      toggleBtn.style.opacity = hidden ? '0' : '1';
+      toggleBtn.style.pointerEvents = hidden ? 'none' : 'auto';
+      phaseDisplay.style.opacity = hidden ? '0' : '0.6';
     });
   }
 })();
